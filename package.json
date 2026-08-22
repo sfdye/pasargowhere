@@ -50,6 +50,8 @@
     "e2e:android": "maestro test --platform android -e APP_ID=com.sfdye.openanot.dev e2e/flows",
     "metadata:ios": "fastlane ios metadata",
     "metadata:android": "fastlane android metadata",
+    "metadata:pull:ios": "fastlane deliver download_metadata --force",
+    "metadata:pull:android": "fastlane supply init",
     "icons": "python3 brand/make_icons.py",
     "release": "node scripts/release.mjs"
   },
