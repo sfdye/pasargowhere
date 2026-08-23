@@ -4,7 +4,7 @@ title: Privacy Policy
 
 # Privacy Policy
 
-**Open Anot?** — effective 21 August 2026
+**PasarGoWhere** — effective 21 August 2026
 
 ## The short version
 
@@ -30,8 +30,8 @@ The app collects no personal information. There are no accounts, no ads, and no 
 
 ## Changes
 
-Any change to this policy will be committed to this file in the app's [public repository](https://github.com/sfdye/open-anot).
+Any change to this policy will be committed to this file in the app's [public repository](https://github.com/sfdye/pasargowhere).
 
 ## Contact
 
-Open an issue at [github.com/sfdye/open-anot/issues](https://github.com/sfdye/open-anot/issues).
+Open an issue at [github.com/sfdye/pasargowhere/issues](https://github.com/sfdye/pasargowhere/issues).

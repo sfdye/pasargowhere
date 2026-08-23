@@ -1,14 +1,16 @@
-Check if your Singapore hawker centre or wet market is open or closed — today and every day. No more wasted trips.
+Discover Singapore's hawker centres and wet markets — find one near you, check if it's open, and get a heads-up before it closes.
 
-Open Anot? covers every publicly listed hawker centre and wet market in Singapore. It shows you upcoming closure dates — quarterly cleaning, maintenance shutdowns, and other rest days — and reminds you before they happen, so you always know before you go.
+PasarGoWhere covers every publicly listed hawker centre and wet market in Singapore. Browse pasars near you, explore famous and featured spots, and filter by wet market or food centre. Save your favourites and get reminders before they close, so you always know before you go.
 
-• Open/closed status for the markets you follow
+• Discover pasars near you when you share your location
+• Filter by wet market, food centre, or browse all
+• Famous and featured pasars collection
+• Open/closed status for the pasars you follow
 • Upcoming closures list with the next reopening date
 • Closure reminders: 7pm the evening before and 6am the morning of
-• Discover markets near you when you share your location
 • Open an address in your favourite map app to get directions
 • Multilingual: English and Chinese, with more to come
 • Works offline — data stays on your phone and updates automatically
 • Large text and Dynamic Type support at every size, light and dark
 
-This app is not affiliated with, endorsed by, or connected to any government agency.
+Not affiliated with the Singapore Government.

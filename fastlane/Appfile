@@ -1,4 +1,4 @@
-app_identifier("com.sfdye.openanot") # iOS bundle identifier
-package_name("com.sfdye.openanot")   # Android package name
+app_identifier("com.sfdye.pasargowhere") # iOS bundle identifier
+package_name("com.sfdye.pasargowhere")   # Android package name
 
 json_key_file("fastlane/play-service-account.json")

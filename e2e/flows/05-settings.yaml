@@ -4,7 +4,7 @@ tags: [smoke]
 # Settings: map-provider row check (iOS), reminders toggle, language toggle en→zh→en.
 - runFlow: ../utils/launch.yaml
 - tapOn:
-    id: tab-today
+    id: tab-mypasars
 - waitForAnimationToEnd
 # Dismiss auto-opened add modal if present.
 - runFlow:
@@ -88,4 +88,4 @@ tags: [smoke]
 - assertVisible: "Language"
 # Navigate back to Today.
 - tapOn:
-    id: tab-today
+    id: tab-mypasars

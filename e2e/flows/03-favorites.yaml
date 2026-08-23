@@ -1,45 +1,12 @@
 appId: ${APP_ID}
 tags: [smoke]
 ---
-# Favorites: swipe-to-delete a market from the Today list.
+# Favorites: swipe-to-delete a market from the My Pasars list.
 # Precondition: at least one favourite exists.
 - runFlow: ../utils/launch.yaml
 - tapOn:
-    id: tab-today
+    id: tab-mypasars
 - waitForAnimationToEnd
-# Handle the auto-opened add modal if there are no favourites.
-- runFlow:
-    when:
-      visible: { id: picker-row }
-    commands:
-      - tapOn: "Search.*"
-      - inputText: Tiong Bahru
-      - tapOn: "Tiong Bahru Market"
-      - runFlow:
-          when:
-            platform: iOS
-          commands:
-            - tapOn: "close"
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: Android
-          commands:
-            - pressKey: Back
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: iOS
-          commands:
-            - tapOn:
-                id: done-button
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: Android
-          commands:
-            - tapOn: "Navigate up"
-            - waitForAnimationToEnd
 # Dismiss the reminder prompt card if present (it can overlap with the row).
 - runFlow:
     when:

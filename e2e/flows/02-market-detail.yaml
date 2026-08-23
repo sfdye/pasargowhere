@@ -5,41 +5,8 @@ tags: [smoke]
 # Precondition: at least one favourite exists.
 - runFlow: ../utils/launch.yaml
 - tapOn:
-    id: tab-today
+    id: tab-mypasars
 - waitForAnimationToEnd
-# If the add modal auto-opened (no favourites), add one first.
-- runFlow:
-    when:
-      visible: { id: picker-row }
-    commands:
-      - tapOn: "Search.*"
-      - inputText: Tiong Bahru
-      - tapOn: "Tiong Bahru Market"
-      - runFlow:
-          when:
-            platform: iOS
-          commands:
-            - tapOn: "close"
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: Android
-          commands:
-            - pressKey: Back
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: iOS
-          commands:
-            - tapOn:
-                id: done-button
-            - waitForAnimationToEnd
-      - runFlow:
-          when:
-            platform: Android
-          commands:
-            - tapOn: "Navigate up"
-            - waitForAnimationToEnd
 # Tap the first market row.
 - tapOn:
     id: market-row
@@ -68,7 +35,7 @@ tags: [smoke]
     commands:
       - pressKey: Back
       - waitForAnimationToEnd
-# Should be back on Today.
+# Should be back on My Pasars.
 - assertVisible:
     id: market-row
     index: 0
