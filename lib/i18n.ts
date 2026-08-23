@@ -108,7 +108,7 @@ const en = {
 };
 
 const zh: Record<keyof typeof en, string> = {
-  appTitle: '巴刹GoWhere',
+  appTitle: '巴刹去哪',
   openToday: '今天开门',
   closedToday: '今天关门',
   warningToday: '多数摊位休息',
