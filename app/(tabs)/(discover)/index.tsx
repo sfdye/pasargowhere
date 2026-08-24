@@ -1,6 +1,6 @@
 import { useDeferredValue, useMemo, useState } from 'react';
-import { FlatList, Linking, Pressable, StyleSheet, View } from 'react-native';
-import { Stack, useRouter } from 'expo-router';
+import { FlatList, Linking, StyleSheet, View } from 'react-native';
+import { Stack } from 'expo-router';
 import PhotoCard from '../../../components/PhotoCard';
 import DiscoverRow from '../../../components/DiscoverRow';
 import { EmptyState, Row, Segmented, Text } from '../../../components/ui';
@@ -15,7 +15,6 @@ import { useLocation } from '../../../lib/useLocation';
 type Filter = 'all' | 'wet' | 'food';
 
 export default function DiscoverScreen() {
-  const router = useRouter();
   const theme = useTheme();
   const t = useT();
   const lang = useLang();

@@ -7,6 +7,42 @@ tags: [smoke]
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
+# If no favourites exist, add one via the picker.
+- runFlow:
+    when:
+      notVisible: { id: market-row }
+    commands:
+      - tapOn:
+          id: add-markets
+      - waitForAnimationToEnd
+      - tapOn: "Search.*"
+      - inputText: Tiong Bahru
+      - tapOn: "Tiong Bahru Market"
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - tapOn: "close"
+            - waitForAnimationToEnd
+      - runFlow:
+          when:
+            platform: Android
+          commands:
+            - pressKey: Back
+            - waitForAnimationToEnd
+      - runFlow:
+          when:
+            platform: iOS
+          commands:
+            - tapOn:
+                id: done-button
+            - waitForAnimationToEnd
+      - runFlow:
+          when:
+            platform: Android
+          commands:
+            - tapOn: "Navigate up"
+            - waitForAnimationToEnd
 # Dismiss the reminder prompt card if present (it can overlap with the row).
 - runFlow:
     when:

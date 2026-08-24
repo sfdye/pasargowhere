@@ -1,4 +1,4 @@
-import { Linking, Platform, StyleSheet, ScrollView, View } from 'react-native';
+import { Linking, Platform, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import SettingsSection from '../../../components/SettingsSection';
 import { Icon, Row, Text } from '../../../components/ui';
