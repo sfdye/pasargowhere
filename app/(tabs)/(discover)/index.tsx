@@ -109,7 +109,7 @@ export default function DiscoverScreen() {
 
             {coords && nearYou.length > 0 && !deferredQuery && (
               <View style={styles.section}>
-                <Text variant="overline" tone="muted">{t('discoverNearYou')}</Text>
+                <Text variant="title">{t('discoverNearYou')}</Text>
                 <FlatList
                   horizontal
                   data={nearYou}
@@ -126,7 +126,7 @@ export default function DiscoverScreen() {
 
             {famous.length > 0 && !deferredQuery && (
               <View style={styles.section}>
-                <Text variant="overline" tone="muted">{t('famousMarkets')}</Text>
+                <Text variant="title">{t('famousMarkets')}</Text>
                 <FlatList
                   horizontal
                   data={famous}
@@ -177,7 +177,7 @@ export default function DiscoverScreen() {
 const styles = StyleSheet.create({
   content: { paddingBottom: space.xxl },
   header: { gap: space.lg, paddingVertical: space.md },
-  section: { gap: space.sm },
+  section: { gap: space.sm, paddingHorizontal: space.lg },
   rail: { paddingHorizontal: space.lg },
   filters: { paddingHorizontal: space.lg },
   separator: { height: StyleSheet.hairlineWidth, marginLeft: space.lg },

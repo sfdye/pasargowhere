@@ -2,15 +2,12 @@ import { memo } from 'react';
 import { Platform, Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import StatusPill from './StatusPill';
 import { Icon, Text } from './ui';
-import { getMarketStatus, parseMarketName } from '../lib/core/market-logic';
+import { parseMarketName } from '../lib/core/market-logic';
 import type { Market } from '../lib/core/market-logic';
 import type { Lang } from '../lib/i18n';
 import { formatDistance, getDisplayName, getMarketDistance } from '../lib/markets';
-import { statusLabel, statusTone } from '../lib/status';
 import type { Coords } from '../lib/useLocation';
-import { useT, useToday } from '../lib/store';
 import { radius, space, useTheme } from '../lib/theme';
 
 const THUMB_SIZE = 56;
@@ -26,14 +23,9 @@ function DiscoverRowInner({
 }) {
   const router = useRouter();
   const theme = useTheme();
-  const today = useToday();
-  const t = useT();
 
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
-  const status = getMarketStatus(market, today);
-  const tone = statusTone(status);
-  const label = statusLabel(tone, t);
   const dist = getMarketDistance(market, coords?.lat ?? null, coords?.lng ?? null);
 
   return (
@@ -41,7 +33,7 @@ function DiscoverRowInner({
       onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
       accessibilityRole="button"
       testID="discover-row"
-      accessibilityLabel={[displayName, label, dist !== null ? formatDistance(dist) : '']
+      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '']
         .filter(Boolean)
         .join('. ')}
       style={({ pressed }) => [
@@ -67,10 +59,7 @@ function DiscoverRowInner({
           </Text>
         )}
       </View>
-      <View style={styles.trailing}>
-        <StatusPill tone={tone} label={label} compact style={styles.pill} />
-        <Icon name="chevron" size={18} color="textFaint" />
-      </View>
+      <Icon name="chevron" size={18} color="textFaint" />
     </Pressable>
   );
 }
@@ -89,6 +78,4 @@ const styles = StyleSheet.create({
   },
   thumb: { width: THUMB_SIZE, height: THUMB_SIZE, borderRadius: radius.thumb },
   info: { flex: 1, gap: 2, minWidth: 0 },
-  trailing: { flexDirection: 'row', alignItems: 'center', gap: space.sm, flexShrink: 0 },
-  pill: { maxWidth: 132 },
 });

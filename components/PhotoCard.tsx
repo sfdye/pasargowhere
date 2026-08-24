@@ -2,15 +2,12 @@ import { memo } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
-import StatusPill from './StatusPill';
 import { Text } from './ui';
-import { getMarketStatus, parseMarketName } from '../lib/core/market-logic';
+import { parseMarketName } from '../lib/core/market-logic';
 import type { Market } from '../lib/core/market-logic';
 import type { Lang } from '../lib/i18n';
 import { formatDistance, getDisplayName, getMarketDistance } from '../lib/markets';
-import { statusLabel, statusTone } from '../lib/status';
 import type { Coords } from '../lib/useLocation';
-import { useT, useToday } from '../lib/store';
 import { radius, space, useTheme } from '../lib/theme';
 
 const CARD_W = 200;
@@ -27,14 +24,9 @@ function PhotoCardInner({
 }) {
   const router = useRouter();
   const theme = useTheme();
-  const today = useToday();
-  const t = useT();
 
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
-  const status = getMarketStatus(market, today);
-  const tone = statusTone(status);
-  const label = statusLabel(tone, t);
   const dist = getMarketDistance(market, coords?.lat ?? null, coords?.lng ?? null);
 
   return (
@@ -42,7 +34,7 @@ function PhotoCardInner({
       onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
       accessibilityRole="button"
       testID="photo-card"
-      accessibilityLabel={[displayName, label, dist !== null ? formatDistance(dist) : '']
+      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '']
         .filter(Boolean)
         .join('. ')}
       style={({ pressed }) => [
@@ -62,14 +54,11 @@ function PhotoCardInner({
         <Text variant="bodyStrong" numberOfLines={1}>
           {displayName}
         </Text>
-        <View style={styles.meta}>
-          <StatusPill tone={tone} label={label} compact />
-          {dist !== null && (
-            <Text variant="footnote" tone="muted">
-              {formatDistance(dist)}
-            </Text>
-          )}
-        </View>
+        {dist !== null && (
+          <Text variant="footnote" tone="muted">
+            {formatDistance(dist)}
+          </Text>
+        )}
       </View>
     </Pressable>
   );
@@ -85,5 +74,4 @@ const styles = StyleSheet.create({
   },
   image: { width: CARD_W, height: CARD_H },
   body: { padding: space.sm, gap: space.xs },
-  meta: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
 });
