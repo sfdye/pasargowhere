@@ -1,17 +1,20 @@
 appId: ${APP_ID}
 tags: [smoke]
 ---
-# Favorites: swipe-to-delete a market from the Today list.
+# Favorites: swipe-to-delete a market from the My Pasars list.
 # Precondition: at least one favourite exists.
 - runFlow: ../utils/launch.yaml
 - tapOn:
-    id: tab-today
+    id: tab-mypasars
 - waitForAnimationToEnd
-# Handle the auto-opened add modal if there are no favourites.
+# If no favourites exist, add one via the picker.
 - runFlow:
     when:
-      visible: { id: picker-row }
+      notVisible: { id: market-row }
     commands:
+      - tapOn:
+          id: add-markets
+      - waitForAnimationToEnd
       - tapOn: "Search.*"
       - inputText: Tiong Bahru
       - tapOn: "Tiong Bahru Market"

@@ -4,7 +4,7 @@ tags: [smoke]
 # Map tab: renders, location permission denied, my-location button present.
 - runFlow: ../utils/launch.yaml
 - tapOn:
-    id: tab-today
+    id: tab-mypasars
 - waitForAnimationToEnd
 # Dismiss auto-opened add modal if present.
 - runFlow:
@@ -48,4 +48,4 @@ tags: [smoke]
     id: map-my-location
 # Navigate back to Today.
 - tapOn:
-    id: tab-today
+    id: tab-mypasars

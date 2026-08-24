@@ -12,6 +12,8 @@ import { type Palette, useTheme } from '../../lib/theme';
 const GLYPHS = {
   today: 'today',
   todayOutline: 'today-outline',
+  discover: 'compass',
+  discoverOutline: 'compass-outline',
   map: 'map',
   mapOutline: 'map-outline',
   settings: 'settings',

@@ -12,12 +12,12 @@ export default function TabsLayout() {
       }}
     >
       <Tabs.Screen
-        name="(today)"
+        name="(discover)"
         options={{
-          title: t('tabToday'),
-          tabBarButtonTestID: 'tab-today',
+          title: t('tabDiscover'),
+          tabBarButtonTestID: 'tab-discover',
           tabBarIcon: ({ focused, color }) => (
-            <Icon name={focused ? 'today' : 'todayOutline'} size={26} color={color as string} />
+            <Icon name={focused ? 'discover' : 'discoverOutline'} size={26} color={color as string} />
           ),
         }}
       />
@@ -28,6 +28,16 @@ export default function TabsLayout() {
           tabBarButtonTestID: 'tab-map',
           tabBarIcon: ({ focused, color }) => (
             <Icon name={focused ? 'map' : 'mapOutline'} size={26} color={color as string} />
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="(mypasars)"
+        options={{
+          title: t('tabMyPasars'),
+          tabBarButtonTestID: 'tab-mypasars',
+          tabBarIcon: ({ focused, color }) => (
+            <Icon name={focused ? 'today' : 'todayOutline'} size={26} color={color as string} />
           ),
         }}
       />

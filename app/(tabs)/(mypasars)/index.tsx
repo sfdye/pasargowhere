@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useRef } from 'react';
-import { FlatList, RefreshControl, StyleSheet, View, useWindowDimensions } from 'react-native';
+import { useMemo } from 'react';
+import { FlatList, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { useRouter } from 'expo-router';
 import MarketRow from '../../../components/MarketRow';
 import ReminderPrompt from '../../../components/ReminderPrompt';
@@ -18,7 +18,7 @@ import {
 import { space, useTheme } from '../../../lib/theme';
 import { useReminders } from '../../../lib/useReminders';
 
-export default function TodayScreen() {
+export default function MyPasarsScreen() {
   const router = useRouter();
   const theme = useTheme();
   const ready = useReady();
@@ -30,15 +30,6 @@ export default function TodayScreen() {
   const stale = useStale();
   const reminders = useReminders();
   const { fontScale } = useWindowDimensions();
-
-  // First run: open the picker straight away rather than showing an empty list. A push
-  // rather than a redirect, so the tab and the modal do not fight over the route.
-  const prompted = useRef(false);
-  useEffect(() => {
-    if (!ready || prompted.current || favorites.length > 0) return;
-    prompted.current = true;
-    router.push('/add');
-  }, [ready, favorites.length, router]);
 
   // Rows keep their identity across refreshes by name, and a favourite the dataset has dropped
   // leaves the list rather than rendering an empty row with separators around it.

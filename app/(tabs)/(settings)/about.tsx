@@ -1,7 +1,7 @@
 import { Linking, Platform, StyleSheet, ScrollView } from 'react-native';
 import Constants from 'expo-constants';
 import SettingsSection from '../../../components/SettingsSection';
-import { Icon, Row } from '../../../components/ui';
+import { Icon, Row, Text } from '../../../components/ui';
 import { DATA_SOURCE_URL, FEEDBACK_URL, ONEMAP_URL, OPEN_DATA_LICENCE_URL, REPO_URL } from '../../../lib/constants';
 import { feedbackUrl, versionLabel, type BuildInfo } from '../../../lib/core/version-info';
 import { formatDate } from '../../../lib/date';
@@ -65,10 +65,15 @@ export default function AboutScreen() {
           last
         />
       </SettingsSection>
+
+      <Text variant="footnote" tone="faint" style={styles.disclaimer}>
+        {t('govDisclaimer')}
+      </Text>
     </ScrollView>
   );
 }
 
 const styles = StyleSheet.create({
   content: { padding: space.md, gap: space.xl, paddingBottom: space.xxxl },
+  disclaimer: { textAlign: 'center', paddingHorizontal: space.lg },
 });
