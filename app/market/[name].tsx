@@ -1,6 +1,7 @@
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import MarketPhoto from '../../components/MarketPhoto';
+import OneMapPreview from '../../components/OneMapPreview';
 import StallCounts, { hasStallCounts } from '../../components/StallCounts';
 import StatusBanner from '../../components/StatusBanner';
 import UpcomingClosures from '../../components/UpcomingClosures';
@@ -47,7 +48,7 @@ export default function MarketDetailScreen() {
   const nextOpen = tone === 'closed' ? getNextOpenDate(market, today) : null;
   const address = market.address_myenv ? decodeEntities(market.address_myenv) : '';
   const coords = marketCoords(market);
-  const showPlaceCard = !!address || hasStallCounts(market);
+  const showPlaceCard = !!address || !!coords || hasStallCounts(market);
 
   const openAddress = () => {
     if (!coords) return;
@@ -113,11 +114,14 @@ export default function MarketDetailScreen() {
                 {!!coords && <Icon name="chevron" size={16} color="textFaint" />}
               </Pressable>
             )}
+            {!!coords && (
+              <OneMapPreview coords={coords} label={parsed.friendly} />
+            )}
             {hasStallCounts(market) && (
               <View
                 style={[
                   styles.stalls,
-                  !!address && {
+                  !!coords && {
                     borderTopWidth: StyleSheet.hairlineWidth,
                     borderTopColor: theme.colors.borderLight,
                   },

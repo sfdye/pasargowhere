@@ -12,12 +12,24 @@ import type { ConfigContext, ExpoConfig } from 'expo/config';
  * project, so builds and credentials stay in one place.
  */
 export default ({ config }: ConfigContext): ExpoConfig => {
-  if (process.env.APP_VARIANT !== 'development') return config as ExpoConfig;
+  const base = config as ExpoConfig;
 
-  const id = `${config.ios?.bundleIdentifier}.dev`;
+  // OneMap routing API token — set via env var at build time (EAS secret or local .env).
+  // Free registration at onemap.gov.sg. Token has a 3-day TTL; see lib/onemap-routing.ts.
+  const extra = {
+    ...base.extra,
+    onemapToken: process.env.ONEMAP_TOKEN,
+  };
+
+  if (process.env.APP_VARIANT !== 'development') {
+    return { ...base, extra };
+  }
+
+  const id = `${base.ios?.bundleIdentifier}.dev`;
 
   return {
-    ...config,
+    ...base,
+    extra,
     // Truncates to "PasarGoWhe…" on the home screen, which still reads as distinct from the
     // release app; every other surface that shows an app name has room for it in full.
     name: 'PasarGoWhere Dev',
@@ -26,9 +38,9 @@ export default ({ config }: ConfigContext): ExpoConfig => {
     locales: undefined,
     // Derived, so it cannot drift from `app.json`. A scheme of its own matters: sharing the release
     // one would leave iOS to pick whichever app it liked for a deep link.
-    scheme: `${config.scheme}dev`,
+    scheme: `${base.scheme}dev`,
     // Spread, not replaced, so `app.json`'s icon variants reach the dev app too.
-    ios: { ...config.ios, bundleIdentifier: id },
-    android: { ...config.android, package: id },
+    ios: { ...base.ios, bundleIdentifier: id },
+    android: { ...base.android, package: id },
   } as ExpoConfig;
 };
