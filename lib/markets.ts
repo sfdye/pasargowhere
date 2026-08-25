@@ -82,6 +82,8 @@ export function searchMarkets(markets: Market[], query: string): Market[] {
     const zh = zhNames[parsed.friendly] ?? '';
     return (
       m.name.toLowerCase().includes(q) ||
+      parsed.street.toLowerCase().includes(q) ||
+      parsed.friendly.toLowerCase().includes(q) ||
       (m.address_myenv ?? '').toLowerCase().includes(q) ||
       zh.includes(query.trim())
     );

@@ -4,13 +4,13 @@ Discover Singapore's hawker centres and wet markets — find one near you, check
 
 ## Why
 
-Wet markets in Singapore close every Monday and have quarterly cleaning closures. The schedule is publicly available on [data.gov.sg](https://data.gov.sg/datasets/d_bda4baa634dd1cc7a6c7cad5f19e2d68/view) but not easy to check quickly. This app gives you the answer at a glance.
+Most stalls at Singapore wet markets rest on Mondays, and markets have quarterly cleaning closures. The schedule is publicly available on [data.gov.sg](https://data.gov.sg/datasets/d_bda4baa634dd1cc7a6c7cad5f19e2d68/view) but not easy to check quickly. This app gives you the answer at a glance.
 
 ## Features
 
 - Instant open/closed status for the markets you follow
 - Covers all 123 NEA-managed hawker centres and wet markets
-- Detects Monday rest days, quarterly cleaning, and other maintenance closures
+- Detects Monday rest days (stallholder convention, not NEA-mandated), quarterly cleaning, and other maintenance closures
 - Upcoming closures list, and the next date each market reopens
 - Map of every market, sorted-by-distance search when you allow location
 - Local closure reminders: 7pm the evening before and 6am the morning of

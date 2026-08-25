@@ -46,7 +46,9 @@ export type MarketStatus =
 
 export interface Closure {
   date: Date;
-  reason: ClosureReason;
+  /** Last day of this closure range, or `undefined` for a single-day closure. */
+  endDate?: Date;
+  reason: NotifiableReason;
   remarks?: string;
 }
 
@@ -107,28 +109,57 @@ export function getMarketStatus(market: Market, date: Date): MarketStatus {
   return { status: 'open' };
 }
 
-/** Closures and warnings over the next `days` days, starting the day after `fromDate`. */
+/**
+ * Verified closures (cleaning, other works) over the next `days` days, starting the day after
+ * `fromDate`. Monday warnings are excluded: the weekly rest day is a stallholder convention, not
+ * an NEA-published closure, so listing it alongside confirmed dates would be unverified noise.
+ *
+ * Consecutive closed days with the same reason are coalesced into a single range entry
+ * (`date` = first day, `endDate` = last day), so a multi-year renovation produces one row,
+ * not 365.
+ */
 export function getUpcomingClosures(market: Market, days: number, fromDate: Date): Closure[] {
   const closures: Closure[] = [];
   const today = stripTime(fromDate);
+  let current: Closure | null = null;
   for (let i = 1; i <= days; i++) {
     // Calendar arithmetic, not +86400000: adding fixed milliseconds slips an hour either
     // way across a DST boundary in the device's timezone, which can shift the calendar day.
     const date = new Date(today.getFullYear(), today.getMonth(), today.getDate() + i);
     const result = getMarketStatus(market, date);
-    if (result.status === 'open') continue;
-    closures.push({
-      date,
-      reason: result.reason,
-      remarks: 'remarks' in result ? result.remarks : undefined,
-    });
+    if (result.status !== 'closed') {
+      if (current) {
+        closures.push(current);
+        current = null;
+      }
+      continue;
+    }
+    const reason = result.reason;
+    const remarks = 'remarks' in result ? result.remarks : undefined;
+    if (current && current.reason === reason && current.remarks === remarks) {
+      current.endDate = date;
+    } else {
+      if (current) closures.push(current);
+      current = { date, reason, remarks };
+    }
   }
+  if (current) closures.push(current);
   return closures;
 }
 
-/** Next day the market is open or on weekly rest, searching up to 60 days out. */
+/**
+ * Next day the market is open or on weekly rest. Checks the current closure's end date first
+ * (so a multi-year renovation resolves instantly), then scans day-by-day up to 60 days out.
+ */
 export function getNextOpenDate(market: Market, fromDate: Date): Date | null {
   const start = stripTime(fromDate);
+  const status = getMarketStatus(market, start);
+  if (status.status === 'closed' && 'end' in status) {
+    const dayAfter = new Date(status.end.getFullYear(), status.end.getMonth(), status.end.getDate() + 1);
+    // A shorter closure (e.g. quarterly cleaning) can sit inside a longer one (e.g. renovation),
+    // so the day after it ends may still be closed — fall through to the scan in that case.
+    if (getMarketStatus(market, dayAfter).status !== 'closed') return dayAfter;
+  }
   for (let i = 1; i <= 60; i++) {
     const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);
     const s = getMarketStatus(market, date).status;
