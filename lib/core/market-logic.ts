@@ -7,6 +7,7 @@ export interface Market {
   longitude_hc?: string;
   no_of_market_stalls?: string;
   no_of_food_stalls?: string;
+  description_myenv?: string;
   q1_cleaningstartdate?: string;
   q1_cleaningenddate?: string;
   q2_cleaningstartdate?: string;
@@ -197,6 +198,10 @@ export function normalizeMarkets(markets: Market[]): Market[] {
   for (const market of markets) {
     const url = market.photourl?.trim();
     market.photourl = url ? url.replace(/^http:\/\//i, 'https://') : undefined;
+
+    const desc = market.description_myenv?.trim();
+    market.description_myenv =
+      desc && desc.toLowerCase() !== 'nil' ? desc : undefined;
   }
   return markets;
 }
