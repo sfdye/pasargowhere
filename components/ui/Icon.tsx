@@ -33,6 +33,10 @@ const GLYPHS = {
   locate: 'locate',
 
   location: 'location-outline',
+  directions: 'navigate-outline',
+  walk: 'walk',
+  bus: 'bus',
+  train: 'train',
   stall: 'basket-outline',
   food: 'restaurant-outline',
   bell: 'notifications',

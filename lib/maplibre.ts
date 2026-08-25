@@ -1,4 +1,6 @@
-import { LogManager } from '@maplibre/maplibre-react-native';
+import { LogManager, type StyleSpecification } from '@maplibre/maplibre-react-native';
+import { SG_BOUNDS } from './core/map-bounds';
+import { darkColors, lightColors, type Palette } from './theme';
 
 /**
  * Silence the tile failures the coastline produces — each one is a LogBox red box for a gap the
@@ -17,3 +19,34 @@ export function configureMapLogging(): void {
     ({ level, message }) => level === 'error' && message.includes('Failed to load tile'),
   );
 }
+
+/** OneMap raster tiles, the same source the web app fed to Leaflet. No API key needed. */
+export function buildMapStyle(colors: Palette, tileset: 'Default' | 'Night'): StyleSpecification {
+  return {
+    version: 8,
+    sources: {
+      onemap: {
+        type: 'raster',
+        tiles: [`https://www.onemap.gov.sg/maps/tiles/${tileset}/{z}/{x}/{y}.png`],
+        tileSize: 256,
+        minzoom: 11,
+        maxzoom: 19,
+        // OneMap serves nothing outside this box, and asking anyway costs a failed decode.
+        bounds: SG_BOUNDS,
+        attribution: 'OneMap © contributors | Singapore Land Authority',
+      },
+    },
+    layers: [
+      // Only visible in the gaps while tiles load, but a white flash in dark mode is jarring.
+      { id: 'background', type: 'background', paint: { 'background-color': colors.mapBg } },
+      { id: `onemap-${tileset.toLowerCase()}`, type: 'raster', source: 'onemap' },
+    ],
+  };
+}
+
+// Module constants: a style object rebuilt per render would reload the map every time.
+// Dark mode swaps the Default tileset for OneMap's Night variant.
+export const MAP_STYLES = {
+  light: buildMapStyle(lightColors, 'Default'),
+  dark: buildMapStyle(darkColors, 'Night'),
+};

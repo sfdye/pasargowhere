@@ -5,7 +5,6 @@ import {
   Layer,
   Map,
   UserLocation,
-  type StyleSpecification,
 } from '@maplibre/maplibre-react-native';
 import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
 import ConstrainedCamera, { type ConstrainedCameraRef } from './ConstrainedCamera';
@@ -15,46 +14,15 @@ import { Icon } from './ui';
 import type { Market } from '../lib/core/market-logic';
 import { SG_BOUNDS, type Center } from '../lib/core/map-bounds';
 import { MAX_MAP_ZOOM, MIN_MAP_ZOOM, type MapView } from '../lib/core/map-view';
-import { configureMapLogging } from '../lib/maplibre';
+import { configureMapLogging, MAP_STYLES } from '../lib/maplibre';
 import { getMarketDistance, marketCoords } from '../lib/markets';
 import { getState, saveMapView, useFavorites, useT } from '../lib/store';
-import { darkColors, lightColors, radius, space, useTheme, type Palette } from '../lib/theme';
+import { radius, space, useTheme } from '../lib/theme';
 import { useLocation } from '../lib/useLocation';
 
 const SINGAPORE_CENTER: Center = [103.8198, 1.3521];
 const LOCATED_ZOOM = 15;
 const USER_VIEW_SAVE_DELAY_MS = 500;
-
-/** OneMap raster tiles, the same source the web app fed to Leaflet. No API key needed. */
-function buildStyle(colors: Palette, tileset: 'Default' | 'Night'): StyleSpecification {
-  return {
-    version: 8,
-    sources: {
-      onemap: {
-        type: 'raster',
-        tiles: [`https://www.onemap.gov.sg/maps/tiles/${tileset}/{z}/{x}/{y}.png`],
-        tileSize: 256,
-        minzoom: 11,
-        maxzoom: 19,
-        // OneMap serves nothing outside this box, and asking anyway costs a failed decode.
-        bounds: SG_BOUNDS,
-        attribution: 'OneMap © contributors | Singapore Land Authority',
-      },
-    },
-    layers: [
-      // Only visible in the gaps while tiles load, but a white flash in dark mode is jarring.
-      { id: 'background', type: 'background', paint: { 'background-color': colors.mapBg } },
-      { id: `onemap-${tileset.toLowerCase()}`, type: 'raster', source: 'onemap' },
-    ],
-  };
-}
-
-// Module constants: a style object rebuilt per render would reload the map every time.
-// Dark mode swaps the Default tileset for OneMap's Night variant.
-const MAP_STYLES = {
-  light: buildStyle(lightColors, 'Default'),
-  dark: buildStyle(darkColors, 'Night'),
-};
 
 // Here rather than in the root layout, which would drag the whole MapLibre module graph into every
 // cold start: this file is its only importer, and the handler is read only while a `Map` is up.
