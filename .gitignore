@@ -45,6 +45,7 @@ yarn-error.*
 
 # tooling
 .playwright-mcp/
+.claude/
 
 # fastlane — credentials and generated reports
 fastlane/report.xml
