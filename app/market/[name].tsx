@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { Pressable, ScrollView, StyleSheet, View } from 'react-native';
 import { Stack, useLocalSearchParams } from 'expo-router';
 import MarketPhoto from '../../components/MarketPhoto';
@@ -20,6 +21,9 @@ import {
 } from '../../lib/store';
 import { space, useTheme } from '../../lib/theme';
 
+const DESC_COLLAPSE_LINES = 3;
+const DESC_COLLAPSE_THRESHOLD = 150;
+
 export default function MarketDetailScreen() {
   const { name } = useLocalSearchParams<{ name: string }>();
   const theme = useTheme();
@@ -29,6 +33,7 @@ export default function MarketDetailScreen() {
   const lang = useLang();
   const mapPref = useMapProviderPref();
   const t = useT();
+  const [descExpanded, setDescExpanded] = useState(false);
 
   // Reachable by deep link from a notification, so the market may have left the dataset since.
   if (!market) {
@@ -46,6 +51,7 @@ export default function MarketDetailScreen() {
   const tone = statusTone(status);
   const nextOpen = tone === 'closed' ? getNextOpenDate(market, today) : null;
   const address = market.address_myenv ? decodeEntities(market.address_myenv) : '';
+  const description = market.description_myenv ? decodeEntities(market.description_myenv) : '';
   const coords = marketCoords(market);
   const showPlaceCard = !!address || hasStallCounts(market);
 
@@ -129,6 +135,40 @@ export default function MarketDetailScreen() {
           </Card>
         )}
 
+        {!!description && (
+          <Card style={styles.about}>
+            <Text variant="overline" tone="faint" style={styles.aboutTitle}>
+              {t('aboutMarket')}
+            </Text>
+            <Text
+              variant="body"
+              numberOfLines={descExpanded ? undefined : DESC_COLLAPSE_LINES}
+            >
+              {description}
+            </Text>
+            {description.length > DESC_COLLAPSE_THRESHOLD && (
+              <Pressable
+                onPress={() => setDescExpanded((v) => !v)}
+                testID="description-toggle"
+                accessibilityRole="button"
+                accessibilityLabel={descExpanded ? t('showLess') : t('showMore')}
+                hitSlop={8}
+                style={styles.moreLess}
+              >
+                <Text variant="callout" tone="accent">
+                  {descExpanded ? t('showLess') : t('showMore')}
+                </Text>
+                <Icon
+                  name="chevron"
+                  size={16}
+                  color="accent"
+                  style={{ transform: [{ rotate: descExpanded ? '-90deg' : '90deg' }] }}
+                />
+              </Pressable>
+            )}
+          </Card>
+        )}
+
         <UpcomingClosures market={market} />
       </ScrollView>
     </>
@@ -147,4 +187,7 @@ const styles = StyleSheet.create({
   },
   address: { flex: 1 },
   stalls: { padding: space.lg },
+  about: { gap: space.xs },
+  aboutTitle: { textTransform: 'uppercase' },
+  moreLess: { flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingVertical: space.sm },
 });

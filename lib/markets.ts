@@ -85,6 +85,7 @@ export function searchMarkets(markets: Market[], query: string): Market[] {
       parsed.street.toLowerCase().includes(q) ||
       parsed.friendly.toLowerCase().includes(q) ||
       (m.address_myenv ?? '').toLowerCase().includes(q) ||
+      (m.description_myenv ?? '').toLowerCase().includes(q) ||
       zh.includes(query.trim())
     );
   });
