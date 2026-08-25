@@ -1,0 +1,77 @@
+appId: ${APP_ID}
+tags: [smoke]
+---
+# Discover tab: search by street address, filter by category, tap a row to detail.
+- runFlow: ../utils/launch.yaml
+# App starts on Discover — wait for it to hydrate.
+- extendedWaitUntil:
+    visible:
+      id: discover-row
+    timeout: 20000
+# --- Search by street address (the bug we fixed) ---
+# The friendly name is "Teck Ghee Square" but the street address is
+# "Ang Mo Kio Ave 10 Blk 409". Searching the street must return it.
+- tapOn: "Search.*"
+- inputText: Ang Mo Kio Ave 10
+- waitForAnimationToEnd
+# At least one result should be visible.
+- assertVisible:
+    id: discover-row
+    index: 0
+# Clear the search text so the filter controls reappear.
+# iOS uses the search bar Close button; Android clears the text field then presses Back.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "close"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Search.*"
+      - eraseText
+      - pressKey: Back
+      - waitForAnimationToEnd
+# --- Filter by category ---
+# The filter segmented control is visible when no query is typed.
+- assertVisible:
+    id: segment-all
+- tapOn:
+    id: segment-wet
+- waitForAnimationToEnd
+# Results should still be present (wet markets exist in the dataset).
+- assertVisible:
+    id: discover-row
+    index: 0
+# Switch back to all.
+- tapOn:
+    id: segment-all
+- waitForAnimationToEnd
+# --- Tap a discover row to reach the detail screen ---
+- tapOn:
+    id: discover-row
+    index: 0
+- waitForAnimationToEnd
+# Detail screen: address row should be present.
+- assertVisible:
+    id: address-row
+# Go back — iOS uses the nav bar Back button, Android uses hardware back.
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: BackButton
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Back
+      - waitForAnimationToEnd
+# Should be back on Discover.
+- assertVisible:
+    id: discover-row
+    index: 0
