@@ -155,7 +155,10 @@ export function getNextOpenDate(market: Market, fromDate: Date): Date | null {
   const start = stripTime(fromDate);
   const status = getMarketStatus(market, start);
   if (status.status === 'closed' && 'end' in status) {
-    return new Date(status.end.getFullYear(), status.end.getMonth(), status.end.getDate() + 1);
+    const dayAfter = new Date(status.end.getFullYear(), status.end.getMonth(), status.end.getDate() + 1);
+    // A shorter closure (e.g. quarterly cleaning) can sit inside a longer one (e.g. renovation),
+    // so the day after it ends may still be closed — fall through to the scan in that case.
+    if (getMarketStatus(market, dayAfter).status !== 'closed') return dayAfter;
   }
   for (let i = 1; i <= 60; i++) {
     const date = new Date(start.getFullYear(), start.getMonth(), start.getDate() + i);

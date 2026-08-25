@@ -301,6 +301,26 @@ describe('getNextOpenDate', () => {
     assert.equal(next.getMonth(), 0);
     assert.equal(next.getDate(), 1);
   });
+
+  test('falls through when cleaning overlaps a longer renovation', () => {
+    // Q1 cleaning (Jan 5-7) sits inside a renovation (Jan 1 - Feb 28).
+    // getMarketStatus checks cleaning first, so on Jan 6 it returns the cleaning closure.
+    // The shortcut must not return Jan 8 (still inside the renovation).
+    const marketOverlap = {
+      ...market,
+      q1_cleaningstartdate: '5/1/2026',
+      q1_cleaningenddate: '7/1/2026',
+      other_works_startdate: '1/1/2026',
+      other_works_enddate: '28/2/2026',
+      remarks_other_works: 'Renovation',
+    };
+    const midCleaning = new Date(2026, 0, 6); // Jan 6 — inside both closures
+    const next = getNextOpenDate(marketOverlap, midCleaning);
+    assert.ok(next);
+    // The renovation ends Feb 28, so the next open day is Mar 1.
+    assert.equal(next.getMonth(), 2);
+    assert.equal(next.getDate(), 1);
+  });
 });
 
 describe('parseMarketName', () => {
