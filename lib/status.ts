@@ -1,4 +1,4 @@
-import type { ClosureReason, MarketStatus } from './core/market-logic';
+import type { MarketStatus, NotifiableReason } from './core/market-logic';
 import { decodeEntities } from './markets';
 import type { Translate } from './store';
 
@@ -31,11 +31,10 @@ export function reasonText(status: MarketStatus, t: Translate): string {
 
 /** The same thing for a row in the upcoming-closures list, where space is tight. */
 export function closureReasonShort(
-  reason: ClosureReason,
+  reason: NotifiableReason,
   remarks: string | undefined,
   t: Translate
 ): string {
-  if (reason === 'monday') return t('weeklyRest');
   if (reason === 'cleaning') return t('cleaning');
   return remarks ? decodeEntities(remarks) : t('otherWorks');
 }

@@ -32,3 +32,9 @@ export function formatDateLong(date: Date, lang: Lang): string {
   }
   return `${DAYS_LONG.en[date.getDay()]}, ${date.getDate()} ${MONTHS_LONG[date.getMonth()]} ${date.getFullYear()}`;
 }
+
+/** Formats a single date, or a range when `endDate` differs from `date`. */
+export function formatDateRange(date: Date, endDate: Date | undefined, lang: Lang): string {
+  if (!endDate || endDate.getTime() === date.getTime()) return formatDate(date, lang);
+  return `${formatDate(date, lang)} – ${formatDate(endDate, lang)}`;
+}

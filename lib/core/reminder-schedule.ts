@@ -95,8 +95,8 @@ function findMarket(markets: Market[], name: string): Market | null {
  * Closures across all favourites over the next HORIZON_DAYS days, collapsed to one entry
  * per date so five favourites closing the same day become one notification.
  *
- * Mondays are excluded: the weekly rest day is predictable, and reminding about it would be
- * 52+ notifications per market per year — enough for the user to turn reminders off entirely.
+ * Monday warnings never reach this function — `getUpcomingClosures` returns only verified
+ * closures — so the schedule is always confirmed dates only.
  */
 export function groupClosuresByDate(
   favorites: string[],
@@ -111,19 +111,22 @@ export function groupClosuresByDate(
     if (!market) continue;
 
     for (const closure of getUpcomingClosures(market, HORIZON_DAYS, today)) {
-      if (closure.reason === 'monday') continue;
-
-      const key = civilKey(closure.date);
-      let group = groups.get(key);
-      if (!group) {
-        group = { date: closure.date, names: [], rawNames: [], reasons: [] };
-        groups.set(key, group);
+      // A closure may span a range (e.g. a 3-day cleaning or a multi-year renovation);
+      // expand it back to individual dates so each day gets its own notification group.
+      const end = closure.endDate ?? closure.date;
+      for (let d = new Date(closure.date); d <= end; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)) {
+        const key = civilKey(d);
+        let group = groups.get(key);
+        if (!group) {
+          group = { date: new Date(d), names: [], rawNames: [], reasons: [] };
+          groups.set(key, group);
+        }
+        if (!group.rawNames.includes(favorite)) {
+          group.rawNames.push(favorite);
+          group.names.push(displayName(favorite, lang));
+        }
+        if (!group.reasons.includes(closure.reason)) group.reasons.push(closure.reason);
       }
-      if (!group.rawNames.includes(favorite)) {
-        group.rawNames.push(favorite);
-        group.names.push(displayName(favorite, lang));
-      }
-      if (!group.reasons.includes(closure.reason)) group.reasons.push(closure.reason);
     }
   }
 

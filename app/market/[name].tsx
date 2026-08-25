@@ -88,7 +88,7 @@ export default function MarketDetailScreen() {
             map callout is a glance, and carrying the caveat there would drown it. */}
         {tone !== 'closed' && (
           <Text variant="footnote" tone="faint" style={styles.hoursNote}>
-            {t('hoursNote')}
+            {t(status.status === 'warning' ? 'hoursNoteMonday' : 'hoursNote')}
           </Text>
         )}
 

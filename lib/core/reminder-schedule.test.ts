@@ -125,13 +125,13 @@ describe('groupClosuresByDate', () => {
     assert.deepEqual(groups[0].rawNames, [raw]);
   });
 
-  test('excludes Mondays', () => {
+  test('a market with only Mondays in the horizon produces no groups', () => {
     const markets = [market('A (Alpha)')];
     const groups = groupClosuresByDate(['A (Alpha)'], markets, today, 'en');
     assert.deepEqual(groups, []);
   });
 
-  test('excludes Mondays that fall inside the horizon alongside real closures', () => {
+  test('only verified closures appear — Mondays within the horizon are absent', () => {
     const markets = [market('A (Alpha)', CLEAN_FEB)];
     const groups = groupClosuresByDate(['A (Alpha)'], markets, today, 'en');
 
@@ -278,7 +278,7 @@ describe('buildSchedule', () => {
     }
   });
 
-  test('never schedules for a Monday', () => {
+  test('a market with no verified closures produces no reminders', () => {
     const entries = buildSchedule(['A (Alpha)'], [market('A (Alpha)')], 'en', now);
     assert.deepEqual(entries, []);
   });

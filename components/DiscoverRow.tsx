@@ -53,6 +53,11 @@ function DiscoverRowInner({
         <Text variant="headline" numberOfLines={1}>
           {displayName}
         </Text>
+        {!!parsed.street && (
+          <Text variant="subhead" tone="muted" numberOfLines={1}>
+            {parsed.street}
+          </Text>
+        )}
         {dist !== null && (
           <Text variant="subhead" tone="muted">
             {formatDistance(dist)}

@@ -212,21 +212,22 @@ describe('getUpcomingClosures', () => {
     remarks_other_works: 'nil',
   };
 
-  test('finds upcoming Mondays', () => {
-    // Starting from a Tuesday
+  test('excludes Mondays — only verified closures appear', () => {
+    // Starting from a Tuesday; June 29 is a Monday within the 10-day window.
+    // No cleaning in June for this market, so without Monday warnings the list is empty.
     const tuesday = new Date(2026, 5, 23); // June 23, 2026 = Tuesday
     const closures = getUpcomingClosures(market, 10, tuesday);
-    const mondays = closures.filter((c) => c.reason === 'monday');
-    assert.ok(mondays.length >= 1);
-    assert.equal(mondays[0].date.getDay(), 1);
+    assert.equal(closures.length, 0);
   });
 
-  test('finds cleaning days in range', () => {
+  test('coalesces consecutive cleaning days into one range', () => {
     const beforeCleaning = new Date(2026, 0, 2); // Jan 2, 2026 = Friday
     const closures = getUpcomingClosures(market, 10, beforeCleaning);
     const cleaning = closures.filter((c) => c.reason === 'cleaning');
-    // Jan 5-7 are all cleaning (cleaning takes priority over Monday on Jan 5)
-    assert.equal(cleaning.length, 3);
+    // Jan 5-7 are all cleaning (cleaning takes priority over Monday on Jan 5) — one range entry
+    assert.equal(cleaning.length, 1);
+    assert.equal(cleaning[0].date.getDate(), 5);
+    assert.equal(cleaning[0].endDate!.getDate(), 7);
   });
 
   test('returns empty for fully open range', () => {
@@ -284,6 +285,21 @@ describe('getNextOpenDate', () => {
     assert.ok(next);
     assert.equal(next.getDay(), 1); // Monday
     assert.equal(next.getDate(), 29);
+  });
+
+  test('returns day after a long closure ends without scanning 60 days', () => {
+    const marketReno = {
+      ...market,
+      other_works_startdate: '1/10/2024',
+      other_works_enddate: '31/12/2029',
+      remarks_other_works: 'Closed for redevelopment',
+    };
+    const midReno = new Date(2026, 7, 25); // Aug 25, 2026 — inside the renovation
+    const next = getNextOpenDate(marketReno, midReno);
+    assert.ok(next);
+    assert.equal(next.getFullYear(), 2030);
+    assert.equal(next.getMonth(), 0);
+    assert.equal(next.getDate(), 1);
   });
 });
 
