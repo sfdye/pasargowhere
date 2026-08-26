@@ -1,0 +1,10 @@
+appId: ${APP_ID}
+---
+# Screenshot-only launch: grants all permissions and sets the simulated
+# location to Singapore city centre so Discover shows the "Near you" rail.
+- setLocation:
+    latitude: 1.2834
+    longitude: 103.8607
+- launchApp:
+    clearState: true
+    permissions: { all: allow }
