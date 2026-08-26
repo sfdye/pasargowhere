@@ -7,6 +7,7 @@ import StatusBanner from '../../components/StatusBanner';
 import UpcomingClosures from '../../components/UpcomingClosures';
 import { Card, EmptyState, Icon, Text } from '../../components/ui';
 import { getMarketStatus, getNextOpenDate, parseMarketName } from '../../lib/core/market-logic';
+import { famousBlurb, isFamous } from '../../lib/core/famous';
 import { openInMaps } from '../../lib/maps';
 import { decodeEntities, getDisplayName, marketCoords } from '../../lib/markets';
 import { statusTone } from '../../lib/status';
@@ -19,7 +20,7 @@ import {
   useT,
   useToday,
 } from '../../lib/store';
-import { space, useTheme } from '../../lib/theme';
+import { radius, space, useTheme } from '../../lib/theme';
 
 const DESC_COLLAPSE_LINES = 3;
 const DESC_COLLAPSE_THRESHOLD = 150;
@@ -86,6 +87,20 @@ export default function MarketDetailScreen() {
       />
       <ScrollView contentInsetAdjustmentBehavior="automatic" contentContainerStyle={styles.content}>
         {!!market.photourl && <MarketPhoto uri={market.photourl} />}
+
+        {isFamous(parsed.friendly) && (
+          <View style={[styles.featured, { backgroundColor: theme.colors.accentPale }]}>
+            <View style={styles.featuredBadge}>
+              <Icon name="featured" size={12} color="accent" />
+              <Text variant="overline" tone="accent" style={styles.featuredBadgeText}>
+                {t('famousBadge')}
+              </Text>
+            </View>
+            <Text variant="subhead" tone="muted">
+              {famousBlurb(parsed.friendly, lang)}
+            </Text>
+          </View>
+        )}
 
         <StatusBanner status={status} nextOpen={nextOpen} />
 
@@ -181,6 +196,20 @@ export default function MarketDetailScreen() {
 
 const styles = StyleSheet.create({
   content: { padding: space.md, gap: space.md },
+  featured: {
+    borderRadius: radius.card,
+    padding: space.lg,
+    gap: space.sm,
+  },
+  featuredBadge: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.xs,
+  },
+  featuredBadgeText: {
+    textTransform: 'uppercase',
+    fontWeight: '600',
+  },
   hoursNote: { paddingHorizontal: space.sm },
   place: { overflow: 'hidden' },
   addressRow: {
