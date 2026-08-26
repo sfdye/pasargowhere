@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import PhotoCard from '../../../components/PhotoCard';
 import DiscoverRow from '../../../components/DiscoverRow';
 import { EmptyState, Row, Segmented, Text } from '../../../components/ui';
-import { getMarketCategory } from '../../../lib/core/market-category';
+import { getMarketCategories } from '../../../lib/core/market-category';
 import { isFamous } from '../../../lib/core/famous';
 import { parseMarketName, type Market } from '../../../lib/core/market-logic';
 import { getDisplayName, getMarketDistance, searchMarkets } from '../../../lib/markets';
@@ -54,7 +54,7 @@ export default function DiscoverScreen() {
   const filtered = useMemo(() => {
     let list = searchMarkets(markets, deferredQuery);
     if (filter !== 'all') {
-      list = list.filter((m) => getMarketCategory(m) === filter);
+      list = list.filter((m) => getMarketCategories(m).includes(filter));
     }
     const sorted = list.slice();
     if (coords) {
