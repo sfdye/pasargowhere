@@ -142,7 +142,11 @@ export default function MarketDetailScreen() {
             </Text>
             <Text
               variant="body"
-              numberOfLines={descExpanded ? undefined : DESC_COLLAPSE_LINES}
+              numberOfLines={
+                description.length > DESC_COLLAPSE_THRESHOLD && !descExpanded
+                  ? DESC_COLLAPSE_LINES
+                  : undefined
+              }
             >
               {description}
             </Text>

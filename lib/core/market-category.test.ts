@@ -1,6 +1,6 @@
 import { test, describe } from 'node:test';
 import assert from 'node:assert/strict';
-import { getMarketCategory } from './market-category.ts';
+import { getMarketCategories } from './market-category.ts';
 import type { Market } from './market-logic.ts';
 
 const mk = (m?: string, f?: string): Market => ({
@@ -9,37 +9,32 @@ const mk = (m?: string, f?: string): Market => ({
   no_of_food_stalls: f,
 });
 
-describe('getMarketCategory', () => {
-  test('wet when market stalls dominate', () => {
-    assert.equal(getMarketCategory(mk('80', '20')), 'wet');
+describe('getMarketCategories', () => {
+  test('both categories when both stall types present', () => {
+    assert.deepEqual(getMarketCategories(mk('80', '20')), ['wet', 'food']);
+    assert.deepEqual(getMarketCategories(mk('10', '90')), ['wet', 'food']);
+    assert.deepEqual(getMarketCategories(mk('50', '50')), ['wet', 'food']);
+    assert.deepEqual(getMarketCategories(mk('55', '45')), ['wet', 'food']);
+    assert.deepEqual(getMarketCategories(mk('1', '134')), ['wet', 'food']);
   });
 
-  test('food when food stalls dominate', () => {
-    assert.equal(getMarketCategory(mk('10', '90')), 'food');
+  test('food only when zero market stalls', () => {
+    assert.deepEqual(getMarketCategories(mk('0', '40')), ['food']);
   });
 
-  test('mixed at roughly even split', () => {
-    assert.equal(getMarketCategory(mk('50', '50')), 'mixed');
-    assert.equal(getMarketCategory(mk('55', '45')), 'mixed');
+  test('wet only when zero food stalls', () => {
+    assert.deepEqual(getMarketCategories(mk('30', '0')), ['wet']);
   });
 
-  test('pure food centre with zero market stalls', () => {
-    assert.equal(getMarketCategory(mk('0', '40')), 'food');
+  test('empty when both counts are missing', () => {
+    assert.deepEqual(getMarketCategories(mk(undefined, undefined)), []);
   });
 
-  test('pure wet market with zero food stalls', () => {
-    assert.equal(getMarketCategory(mk('30', '0')), 'wet');
+  test('empty when both counts are zero', () => {
+    assert.deepEqual(getMarketCategories(mk('0', '0')), []);
   });
 
-  test('null when both counts are missing', () => {
-    assert.equal(getMarketCategory(mk(undefined, undefined)), null);
-  });
-
-  test('null when both counts are zero', () => {
-    assert.equal(getMarketCategory(mk('0', '0')), null);
-  });
-
-  test('null on non-numeric strings', () => {
-    assert.equal(getMarketCategory(mk('abc', '10')), null);
+  test('empty on non-numeric strings', () => {
+    assert.deepEqual(getMarketCategories(mk('abc', '10')), []);
   });
 });
