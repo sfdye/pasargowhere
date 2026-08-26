@@ -7,6 +7,7 @@ import {
   type Market,
   type ParsedMarketName,
 } from './core/market-logic';
+import { resolveDisplayName } from './core/name-overrides';
 import { zhNames } from './core/zh-names';
 import { saveCachedMarkets } from './storage';
 import type { Lang } from './i18n';
@@ -29,6 +30,8 @@ export function getNextCleaningDate(market: Market, today: Date): Date | null {
 }
 
 export function getDisplayName(parsed: ParsedMarketName, lang: Lang): string {
+  const override = resolveDisplayName(parsed.friendly, lang);
+  if (override) return override;
   if (lang === 'zh') return zhNames[parsed.friendly] || parsed.friendly;
   return parsed.friendly;
 }

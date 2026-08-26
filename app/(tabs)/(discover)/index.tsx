@@ -5,7 +5,7 @@ import PhotoCard from '../../../components/PhotoCard';
 import DiscoverRow from '../../../components/DiscoverRow';
 import { EmptyState, Row, Segmented, Text } from '../../../components/ui';
 import { getMarketCategories } from '../../../lib/core/market-category';
-import { isFamous } from '../../../lib/core/famous';
+import { FAMOUS_PASARS, famousBlurb } from '../../../lib/core/famous';
 import { parseMarketName, type Market } from '../../../lib/core/market-logic';
 import { getDisplayName, getMarketDistance, searchMarkets } from '../../../lib/markets';
 import { useLang, useMarkets, useReady, useStale, useT } from '../../../lib/store';
@@ -42,14 +42,25 @@ export default function DiscoverScreen() {
 
   const nearYou = useMemo(() => (byDistance ?? []).slice(0, 10), [byDistance]);
 
-  const famous = useMemo(
-    () =>
-      markets.filter((m) => {
-        const parsed = parseMarketName(m.name);
-        return isFamous(parsed.friendly);
-      }),
-    [markets]
-  );
+  const famous = useMemo(() => {
+    const byFriendly = new Map<string, Market>();
+    for (const m of markets) {
+      const { friendly } = parseMarketName(m.name);
+      if (!byFriendly.has(friendly)) byFriendly.set(friendly, m);
+    }
+    const resolved = FAMOUS_PASARS.map((f) => byFriendly.get(f.name)).filter((m): m is Market => !!m);
+    if (coords) {
+      resolved.sort((a, b) => {
+        const da = getMarketDistance(a, coords.lat, coords.lng);
+        const db = getMarketDistance(b, coords.lat, coords.lng);
+        if (da === null && db === null) return 0;
+        if (da === null) return 1;
+        if (db === null) return -1;
+        return da - db;
+      });
+    }
+    return resolved;
+  }, [markets, coords]);
 
   const filtered = useMemo(() => {
     let list = searchMarkets(markets, deferredQuery);
@@ -131,7 +142,12 @@ export default function DiscoverScreen() {
                   data={famous}
                   keyExtractor={(m) => m.name}
                   renderItem={({ item }) => (
-                    <PhotoCard market={item} lang={lang} coords={coords} />
+                    <PhotoCard
+                      market={item}
+                      lang={lang}
+                      coords={coords}
+                      blurb={famousBlurb(parseMarketName(item.name).friendly, lang) ?? undefined}
+                    />
                   )}
                   showsHorizontalScrollIndicator={false}
                   contentContainerStyle={styles.rail}

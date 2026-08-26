@@ -122,12 +122,15 @@ Tapping the address opens Apple Maps or Google Maps; the setting is iOS-only (An
 
 Closure reasons are worded once, in `lib/core/reason-words.ts` (in core because `notificationCopy` is there), and read back by `i18n.ts` for the status pill. Word a new reason there, not at the call site.
 
+Famous-pasar blurbs follow the same pattern: `lib/core/famous.ts` holds `FAMOUS_PASARS` (ordered by editorial rank) with a `Record<Lang, string>` blurb per entry — both languages in core so a missing translation fails typecheck. Keys are the *friendly* name as it appears in the NEA dataset (verified against the live API), not the common name.
+
 Language resolution: `state.langPref` (`Lang | 'system'`) is the choice, `lang` follows from it, resolved through `lib/lang.ts` (separate module so headless `background.ts` can reach it without the store). Three rules: a missing `oa_lang` means `'system'` (`loadLangPref` returns it rather than `null` — `?? 'en'` once sent English reminders to Chinese phones); membership of the supported set is `isLang()`, never `=== 'en' || === 'zh'`; re-passing an unchanged `langPref` to `setState` re-resolves deliberately (that's how foreground picks up a device-language change).
 
 ## Dataset handling
 
 - Market identity is the raw NEA `name` string; favourites are stored as those strings. `parseMarketName` splits `"Blk 1 Foo Rd (Bar Market)"` into street plus friendly name and decodes HTML entities.
 - `normalizeMarkets` runs at every ingress — network fetch *and* cache read. Dataset quirk fixes belong there.
+- Some NEA friendly names don't match common usage ("Kim Hua Market" for Maxwell, "Telok Ayer Food Centre" for Amoy). The fix is display-only via `lib/core/name-overrides.ts`, consulted by `getDisplayName` — the raw `name` string (identity) is never rewritten.
 - A market can leave the dataset: favourites pointing at a missing market are pruned on load, and `useMarket` returns `null`. Handle that in any new screen.
 - `MAX_FAVORITES` (`lib/core/favorites.ts`) caps the list; it's a reminder-queue bound alongside `HORIZON_DAYS` and `MAX_SCHEDULED_REMINDERS`, and `reminder-schedule.test.ts` asserts a full list still fits. Enforcement is at the add only; removal always works. `toggleFavorite` raises the limit Alert itself.
 - `fetchMarketsFromAPI` returns `null` rather than throwing (10s timeout, one retry); the caller falls back to the cache and sets `stale`.

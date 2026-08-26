@@ -17,10 +17,12 @@ function PhotoCardInner({
   market,
   lang,
   coords,
+  blurb,
 }: {
   market: Market;
   lang: Lang;
   coords: Coords | null;
+  blurb?: string;
 }) {
   const router = useRouter();
   const theme = useTheme();
@@ -34,7 +36,7 @@ function PhotoCardInner({
       onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
       accessibilityRole="button"
       testID="photo-card"
-      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '']
+      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '', blurb]
         .filter(Boolean)
         .join('. ')}
       style={({ pressed }) => [
@@ -54,6 +56,11 @@ function PhotoCardInner({
         <Text variant="bodyStrong" numberOfLines={1}>
           {displayName}
         </Text>
+        {blurb && (
+          <Text variant="footnote" tone="muted" numberOfLines={1}>
+            {blurb}
+          </Text>
+        )}
         {dist !== null && (
           <Text variant="footnote" tone="muted">
             {formatDistance(dist)}
