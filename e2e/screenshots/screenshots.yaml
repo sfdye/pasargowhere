@@ -1,0 +1,108 @@
+appId: ${APP_ID}
+tags: [screenshots]
+---
+# Screenshot capture flow — run against a standalone dev build.
+# Produces 5 screenshots per locale for App Store and Play Store listings.
+#
+# Usage:
+#   1. Build: APP_VARIANT=development npx expo run:ios --configuration Release
+#   2. npm run screenshots:ios  (or screenshots:android)
+#
+# Screenshots save to Maestro's default output dir (.maestro/tests/...).
+# Copy them into fastlane/screenshots/<locale>/ and
+# fastlane/metadata/android/<locale>/images/phoneScreenshots/ after capture.
+
+- runFlow: ../utils/launch.yaml
+# App starts on Discover — wait for it to hydrate.
+- extendedWaitUntil:
+    visible:
+      id: discover-row
+    timeout: 20000
+
+# --- Setup: add Tiong Bahru Market as a favourite ---
+- tapOn:
+    id: tab-mypasars
+- waitForAnimationToEnd
+- tapOn:
+    id: add-markets
+- waitForAnimationToEnd
+- tapOn: "Search.*"
+- inputText: Tiong Bahru
+- tapOn: "Tiong Bahru Market"
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn: "close"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Back
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: done-button
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - tapOn: "Navigate up"
+      - waitForAnimationToEnd
+
+# Dismiss the reminder prompt card if present.
+- runFlow:
+    when:
+      visible: "Not now"
+    commands:
+      - tapOn: "Not now"
+      - waitForAnimationToEnd
+
+# Screenshot 1: Discover tab.
+- tapOn:
+    id: tab-discover
+- waitForAnimationToEnd
+- takeScreenshot: 01-discover
+
+# Screenshot 2: My Pasars with a favourited market.
+- tapOn:
+    id: tab-mypasars
+- waitForAnimationToEnd
+- takeScreenshot: 02-mypasars
+
+# Screenshot 3: Market detail.
+- tapOn:
+    id: market-row
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: 03-market-detail
+- runFlow:
+    when:
+      platform: iOS
+    commands:
+      - tapOn:
+          id: BackButton
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      platform: Android
+    commands:
+      - pressKey: Back
+      - waitForAnimationToEnd
+
+# Screenshot 4: Map.
+- tapOn:
+    id: tab-map
+- waitForAnimationToEnd
+- takeScreenshot: 04-map
+
+# Screenshot 5: Settings.
+- tapOn:
+    id: tab-settings
+- waitForAnimationToEnd
+- takeScreenshot: 05-settings

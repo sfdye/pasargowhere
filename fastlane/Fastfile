@@ -13,7 +13,7 @@ platform :ios do
     deliver(
       api_key_path: ASC_API_KEY_PATH,
       skip_binary_upload: true,
-      skip_screenshots: true,
+      overwrite_screenshots: true,
       force: true,
       run_precheck_before_submit: false,
       metadata_path: "fastlane/metadata",
@@ -34,7 +34,6 @@ platform :android do
       skip_upload_aab: true,
       skip_upload_apk: true,
       skip_upload_changelogs: true,
-      skip_upload_screenshots: true,
       track: "internal",
       metadata_path: "fastlane/metadata/android",
     )
