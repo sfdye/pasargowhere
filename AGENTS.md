@@ -25,7 +25,7 @@ Those two are the whole of CI (`.github/workflows/test.yml`); there is no lint s
 - Flows target elements by `testID` (Maestro's `id:` selector), not by text — accessibility labels are localized. Add a `testID` to any new interactive element a flow needs to address.
 - Notifications, deep-link routing, and background refresh remain untestable in simulators.
 - Before marking a PR ready for review, prompt the user to run `npm run e2e:ios` and `npm run e2e:android` locally against a fresh dev build.
-- `e2e/screenshots/` produces 5 screenshots per locale (Discover, My Pasars, Market detail, Map, Settings). After capture, copy output from `.maestro/tests/` into `fastlane/screenshots/{en-US,zh-Hans}/` (iOS) and `fastlane/metadata/android/{en-US,en-SG,zh-CN}/images/phoneScreenshots/` (Android). Re-capture after any UI or store-listing change.
+- `e2e/screenshots/` produces 5 screenshots per locale (Discover, My Pasars, Market detail, Map, Settings). After capture, copy output from `.maestro/tests/` into `fastlane/screenshots/{en-US,zh-Hans}/` (iOS) and `fastlane/metadata/android/{en-US,zh-CN}/images/phoneScreenshots/` (Android). Re-capture after any UI or store-listing change.
 
 ## Editing across the two TypeScript programs
 

@@ -2,8 +2,8 @@ appId: ${APP_ID}
 tags: [screenshots-zh]
 ---
 # Screenshot capture flow for Chinese (zh-Hans) locale.
-# Adds a favourite in English first, switches to Chinese, captures all screens,
-# then switches back to English.
+# Adds a favourite in English first, switches to Chinese, captures all screens.
+# clearState in launch.yaml resets the app for the next run.
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.
@@ -71,20 +71,20 @@ tags: [screenshots-zh]
 - tapOn:
     id: tab-discover
 - waitForAnimationToEnd
-- takeScreenshot: 01-discover-zh
+- takeScreenshot: 01-discover
 
 # Screenshot 2: My Pasars in Chinese.
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
-- takeScreenshot: 02-mypasars-zh
+- takeScreenshot: 02-mypasars
 
 # Screenshot 3: Market detail in Chinese.
 - tapOn:
     id: market-row
     index: 0
 - waitForAnimationToEnd
-- takeScreenshot: 03-market-detail-zh
+- takeScreenshot: 03-market-detail
 - runFlow:
     when:
       platform: iOS
@@ -103,10 +103,10 @@ tags: [screenshots-zh]
 - tapOn:
     id: tab-map
 - waitForAnimationToEnd
-- takeScreenshot: 04-map-zh
+- takeScreenshot: 04-map
 
 # Screenshot 5: Settings in Chinese.
 - tapOn:
     id: tab-settings
 - waitForAnimationToEnd
-- takeScreenshot: 05-settings-zh
+- takeScreenshot: 05-settings

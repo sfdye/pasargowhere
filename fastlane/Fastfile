@@ -3,8 +3,8 @@ ASC_API_KEY_PATH = "fastlane/asc-api-key.json"
 default_platform(:ios)
 
 # ─── iOS: App Store Connect metadata ─────────────────────────────────────
-# EAS owns builds and binary submission. This lane only pushes listing text.
-# Run after editing fastlane/metadata/{en-US,zh-Hans}/.
+# EAS owns builds and binary submission. This lane pushes listing text and screenshots.
+# Run after editing fastlane/metadata/{en-US,zh-Hans}/ or fastlane/screenshots/.
 #
 # To pull existing metadata: fastlane deliver download_metadata
 platform :ios do
@@ -23,7 +23,7 @@ platform :ios do
 end
 
 # ─── Android: Google Play metadata ───────────────────────────────────────
-# EAS owns builds and binary submission. This lane only pushes listing text.
+# EAS owns builds and binary submission. This lane pushes listing text and screenshots.
 # Run after editing fastlane/metadata/android/{en-US,zh-CN}/.
 #
 # To pull existing metadata: fastlane supply init
