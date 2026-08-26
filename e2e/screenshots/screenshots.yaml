@@ -12,7 +12,7 @@ tags: [screenshots]
 # Copy them into fastlane/screenshots/<locale>/ and
 # fastlane/metadata/android/<locale>/images/phoneScreenshots/ after capture.
 
-- runFlow: ../utils/launch.yaml
+- runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.
 - extendedWaitUntil:
     visible:

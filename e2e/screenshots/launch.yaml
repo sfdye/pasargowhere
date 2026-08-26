@@ -1,0 +1,7 @@
+appId: ${APP_ID}
+---
+# Screenshot-only launch: grants location so Discover shows the "Near you"
+# rail and distance-sorted results instead of a permission prompt.
+- launchApp:
+    clearState: true
+    permissions: { all: allow }
