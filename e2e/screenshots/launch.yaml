@@ -1,7 +1,11 @@
 appId: ${APP_ID}
 ---
-# Screenshot-only launch: grants location so Discover shows the "Near you"
-# rail and distance-sorted results instead of a permission prompt.
+# Screenshot-only launch: grants location and sets the simulated position to
+# Singapore city centre so Discover shows the "Near you" rail.
+#
+# Before running, set the simulator/emulator location:
+#   iOS:     xcrun simctl location <udid> set 1.2834,103.8607
+#   Android: adb emu geo fix 103.8607 1.2834
 - launchApp:
     clearState: true
     permissions: { all: allow }
