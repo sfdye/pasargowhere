@@ -1,9 +1,10 @@
 appId: ${APP_ID}
 ---
-# Screenshot-only launch: grants all permissions so Discover shows the
-# "Near you" rail. The npm scripts (screenshots:ios / screenshots:android)
-# set the simulator/emulator location to Singapore city centre before
-# running Maestro, so no manual setup is needed.
+# Screenshot-only launch: grants all permissions and sets the simulated
+# location to Singapore city centre so Discover shows the "Near you" rail.
+- setLocation:
+    latitude: 1.2834
+    longitude: 103.8607
 - launchApp:
     clearState: true
     permissions: { all: allow }
