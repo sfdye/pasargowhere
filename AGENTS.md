@@ -26,6 +26,7 @@ Those two are the whole of CI (`.github/workflows/test.yml`); there is no lint s
 - Notifications, deep-link routing, and background refresh remain untestable in simulators.
 - Before marking a PR ready for review, prompt the user to run `npm run e2e:ios` and `npm run e2e:android` locally against a fresh dev build.
 - `e2e/screenshots/` produces 5 screenshots per locale (Discover, My Pasars, Market detail, Map, Settings). After capture, copy output from `.maestro/tests/` into `fastlane/screenshots/{en-US,zh-Hans}/` (iOS) and `fastlane/metadata/android/{en-US,zh-CN}/images/phoneScreenshots/` (Android). Re-capture after any UI or store-listing change.
+- A Release build embeds JS at build time — the installed binary carries stale code until you rebuild. Always run `APP_VARIANT=development npx expo run:ios --configuration Release` before capturing screenshots or running e2e; capturing against an old build produces screenshots that don't reflect current UI. Kill Metro first (`lsof -ti:8081 | xargs kill -9`) so Maestro launches the standalone binary, not Metro-served JS.
 
 ## Editing across the two TypeScript programs
 
