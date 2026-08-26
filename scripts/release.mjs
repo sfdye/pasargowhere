@@ -51,6 +51,7 @@ console.log(`
 release: ${tag} committed and tagged (iOS buildNumber and Android versionCode both ${next})
 
 next:
+  generate changelog    # see CHANGELOG_PROMPT.md (CHANGELOG.md + fastlane release notes)
   git push && git push --tags
   eas build --profile production -p all
 `);
