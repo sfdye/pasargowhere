@@ -11,16 +11,19 @@ import type { Coords } from '../lib/useLocation';
 import { radius, space, useTheme } from '../lib/theme';
 
 const CARD_W = 200;
+const CARD_W_FEATURED = 240;
 const CARD_H = 140;
 
 function PhotoCardInner({
   market,
   lang,
   coords,
+  blurb,
 }: {
   market: Market;
   lang: Lang;
   coords: Coords | null;
+  blurb?: string;
 }) {
   const router = useRouter();
   const theme = useTheme();
@@ -28,23 +31,24 @@ function PhotoCardInner({
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
   const dist = getMarketDistance(market, coords?.lat ?? null, coords?.lng ?? null);
+  const cardW = blurb ? CARD_W_FEATURED : CARD_W;
 
   return (
     <Pressable
       onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
       accessibilityRole="button"
       testID="photo-card"
-      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '']
+      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '', blurb]
         .filter(Boolean)
         .join('. ')}
       style={({ pressed }) => [
         styles.card,
-        { backgroundColor: pressed ? theme.colors.borderLight : theme.colors.surface },
+        { width: cardW, backgroundColor: pressed ? theme.colors.borderLight : theme.colors.surface },
       ]}
     >
       <Image
         source={market.photourl ? { uri: market.photourl } : undefined}
-        style={[styles.image, { backgroundColor: theme.colors.borderLight }]}
+        style={[styles.image, { width: cardW, backgroundColor: theme.colors.borderLight }]}
         contentFit="cover"
         cachePolicy="memory-disk"
         transition={150}
@@ -54,6 +58,11 @@ function PhotoCardInner({
         <Text variant="bodyStrong" numberOfLines={1}>
           {displayName}
         </Text>
+        {blurb && (
+          <Text variant="footnote" tone="muted" numberOfLines={2}>
+            {blurb}
+          </Text>
+        )}
         {dist !== null && (
           <Text variant="footnote" tone="muted">
             {formatDistance(dist)}
@@ -68,10 +77,9 @@ export default memo(PhotoCardInner);
 
 const styles = StyleSheet.create({
   card: {
-    width: CARD_W,
     borderRadius: radius.card,
     overflow: 'hidden',
   },
-  image: { width: CARD_W, height: CARD_H },
+  image: { height: CARD_H },
   body: { padding: space.sm, gap: space.xs },
 });

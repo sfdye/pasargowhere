@@ -7,6 +7,7 @@ import {
   type Market,
   type ParsedMarketName,
 } from './core/market-logic';
+import { resolveDisplayName } from './core/name-overrides';
 import { zhNames } from './core/zh-names';
 import { saveCachedMarkets } from './storage';
 import type { Lang } from './i18n';
@@ -29,6 +30,8 @@ export function getNextCleaningDate(market: Market, today: Date): Date | null {
 }
 
 export function getDisplayName(parsed: ParsedMarketName, lang: Lang): string {
+  const override = resolveDisplayName(parsed.friendly, lang);
+  if (override) return override;
   if (lang === 'zh') return zhNames[parsed.friendly] || parsed.friendly;
   return parsed.friendly;
 }
@@ -80,13 +83,17 @@ export function searchMarkets(markets: Market[], query: string): Market[] {
   return markets.filter((m) => {
     const parsed = parseMarketName(m.name);
     const zh = zhNames[parsed.friendly] ?? '';
+    const overrideEn = resolveDisplayName(parsed.friendly, 'en');
+    const overrideZh = resolveDisplayName(parsed.friendly, 'zh');
     return (
       m.name.toLowerCase().includes(q) ||
       parsed.street.toLowerCase().includes(q) ||
       parsed.friendly.toLowerCase().includes(q) ||
+      (overrideEn?.toLowerCase().includes(q) ?? false) ||
       (m.address_myenv ?? '').toLowerCase().includes(q) ||
       (m.description_myenv ?? '').toLowerCase().includes(q) ||
-      zh.includes(query.trim())
+      zh.includes(query.trim()) ||
+      (overrideZh?.includes(query.trim()) ?? false)
     );
   });
 }

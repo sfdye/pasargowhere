@@ -21,6 +21,7 @@ const GLYPHS = {
 
   favorite: 'star',
   favoriteOutline: 'star-outline',
+  featured: 'ribbon-outline',
 
   add: 'add',
   close: 'close',
