@@ -97,7 +97,7 @@ export default function MarketDetailScreen() {
               </Text>
             </View>
             <Text variant="subhead" tone="muted">
-              {famousBlurb(parsed.friendly, lang)}
+              {famousBlurb(parsed.friendly, lang) ?? ''}
             </Text>
           </View>
         )}

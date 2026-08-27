@@ -108,8 +108,8 @@ export const FAMOUS_PASARS: readonly FamousPasar[] = [
   {
     name: 'Whampoa Drive Makan Place/Whampoa Market',
     blurb: {
-      en: 'Famous soya beancurd and fish soup',
-      zh: '驰名豆花与鱼汤',
+      en: 'Heritage wet market with popular hawker stalls',
+      zh: '传统湿巴刹与人气熟食摊位',
     },
   },
   {
