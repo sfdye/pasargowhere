@@ -1,15 +1,15 @@
 {
   "expo": {
-    "name": "PasarGoWhere",
-    "slug": "pasargowhere",
+    "name": "PasarGuru",
+    "slug": "pasarguru",
     "version": "1.0.0",
     "runtimeVersion": {
       "policy": "appVersion"
     },
     "updates": {
-      "url": "https://u.expo.dev/58cbdff3-a325-4c07-943c-5e3974e9b8db"
+      "url": "https://u.expo.dev/c4c4cfe6-42e8-4df0-9acb-d8135ac8029c"
     },
-    "scheme": "pasargowhere",
+    "scheme": "pasarguru",
     "orientation": "portrait",
     "platforms": [
       "ios",
@@ -26,8 +26,8 @@
       "zh-Hans": "./locales/zh-Hans.json"
     },
     "ios": {
-      "bundleIdentifier": "com.sfdye.pasargowhere",
-      "buildNumber": "2",
+      "bundleIdentifier": "com.sfdye.pasarguru",
+      "buildNumber": "1",
       "icon": {
         "light": "./assets/icon.png",
         "dark": "./assets/mark-white.png",
@@ -42,8 +42,8 @@
       }
     },
     "android": {
-      "package": "com.sfdye.pasargowhere",
-      "versionCode": 2,
+      "package": "com.sfdye.pasarguru",
+      "versionCode": 1,
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "monochromeImage": "./assets/adaptive-icon.png",
@@ -90,7 +90,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "58cbdff3-a325-4c07-943c-5e3974e9b8db"
+        "projectId": "c4c4cfe6-42e8-4df0-9acb-d8135ac8029c"
       }
     },
     "owner": "sfdye"

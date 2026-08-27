@@ -8,3 +8,18 @@ appId: ${APP_ID}
 - launchApp:
     clearState: true
     permissions: { all: allow }
+- waitForAnimationToEnd
+# `expo run:ios` finishes by opening a dev-client deep link, which leaves a system
+# "Open in <app>?" sheet on screen; accept it so the app can foreground.
+- runFlow:
+    when:
+      visible: "Open in"
+    commands:
+      - tapOn: "Open"
+      - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Allow While Using App"
+    commands:
+      - tapOn: "Allow While Using App"
+      - waitForAnimationToEnd

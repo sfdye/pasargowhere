@@ -17,7 +17,7 @@ tags: [screenshots]
 - extendedWaitUntil:
     visible:
       id: discover-row
-    timeout: 20000
+    timeout: 60000
 
 # --- Setup: add Tiong Bahru Market as a favourite ---
 - tapOn:
