@@ -1,4 +1,4 @@
-# PasarGoWhere
+# PasarWhere
 
 Discover Singapore's hawker centres and wet markets — find one near you, check if it's open, and get a heads-up before it closes. iOS and Android, built with Expo.
 
@@ -74,7 +74,7 @@ APP_VARIANT=development npx expo run:android --variant release
 npm run e2e:android
 ```
 
-Flows target elements by `testID` (stable across languages) and run against `com.sfdye.pasargowhere.dev`, the dev build identity. Notifications and deep-link handling remain untestable in simulators.
+Flows target elements by `testID` (stable across languages) and run against `com.sfdye.pasarwhere.dev`, the dev build identity. Notifications and deep-link handling remain untestable in simulators.
 
 ## Develop
 
@@ -85,7 +85,7 @@ npm run android
 npm start         # Metro alone, once the app is already installed
 ```
 
-Those install a separate app called "PasarGoWhere Dev": `app.config.ts` gives the dev build its own name and bundle identifier when `APP_VARIANT=development` is set, which the scripts above do, so it sits alongside a TestFlight build instead of replacing it. Build it once and leave it there — a JS change only needs `npm start` and a reload, and only a change to `app.json`, a native dependency or a config plugin needs another build. With no Metro running the dev app has nothing to load, because a debug build fetches its JS at launch rather than embedding it.
+Those install a separate app called "PasarWhere Dev": `app.config.ts` gives the dev build its own name and bundle identifier when `APP_VARIANT=development` is set, which the scripts above do, so it sits alongside a TestFlight build instead of replacing it. Build it once and leave it there — a JS change only needs `npm start` and a reload, and only a change to `app.json`, a native dependency or a config plugin needs another build. With no Metro running the dev app has nothing to load, because a debug build fetches its JS at launch rather than embedding it.
 
 Expo Go cannot run this app. `@maplibre/maplibre-react-native` is a third-party native module and is not compiled into Expo Go, so the map fails there no matter which Expo Go version is installed — the error is usually a misleading "download the latest version of Expo Go". Use a dev build, which the commands above produce. A local iOS build also needs CocoaPods once (`brew install cocoapods`) and a device on an iOS version Xcode supports.
 
@@ -153,10 +153,6 @@ unzip -p <path-to-ipa> 'Payload/*.app/embedded.mobileprovision' | security cms -
 ```
 
 A `development` `.ipa` is a dev client with no JS bundle, so it needs `npm start` on the same network. For a self-contained dev app, skip EAS: `APP_VARIANT=development npx expo run:ios --configuration Release` builds, signs and installs in one step.
-
-## History
-
-This started as a plain HTML/CSS/TypeScript PWA at pasargowhere.com, with a Cloudflare Worker for web push. The native app replaced it: reminders are scheduled on-device, so there is nothing left to host. The web app, its service worker and the Worker were removed — `git log` has them if you want to look.
 
 ## License
 

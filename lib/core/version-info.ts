@@ -21,15 +21,15 @@ export function versionLabel({ version, build }: BuildInfo): string {
 /** Platform.OS values are lowercase identifiers; an email to a human wants the real names. */
 const OS_NAMES: Record<string, string> = { ios: 'iOS', android: 'Android' };
 
-/** One paste-ready line — "PasarGoWhere 1.0.0 (4) · iOS 18.5" — everything a bug report needs. */
+/** One paste-ready line — "PasarWhere 1.0.0 (4) · iOS 18.5" — everything a bug report needs. */
 export function buildSummary(info: BuildInfo): string {
   const os = OS_NAMES[info.os] ?? info.os;
-  return `PasarGoWhere ${versionLabel(info)} · ${os} ${info.osVersion}`;
+  return `PasarWhere ${versionLabel(info)} · ${os} ${info.osVersion}`;
 }
 
 /** The mailto opens with the build details already quoted below a blank writing area. */
 export function feedbackUrl(to: string, info: BuildInfo): string {
-  const subject = encodeURIComponent('PasarGoWhere feedback');
+  const subject = encodeURIComponent('PasarWhere feedback');
   const body = encodeURIComponent(`\n\n—\n${buildSummary(info)}`);
   return `${to}?subject=${subject}&body=${body}`;
 }

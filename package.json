@@ -1,5 +1,5 @@
 {
-  "name": "pasargowhere",
+  "name": "pasarwhere",
   "version": "1.0.0",
   "main": "expo-router/entry",
   "dependencies": {
@@ -45,11 +45,11 @@
     "typecheck": "tsc -p tsconfig.json && tsc -p tsconfig.test.json",
     "test": "node --test lib/core/*.test.ts",
     "ci": "npm run typecheck && npm test",
-    "e2e": "maestro test -e APP_ID=com.sfdye.pasargowhere.dev e2e/flows",
-    "e2e:ios": "maestro test --platform ios -e APP_ID=com.sfdye.pasargowhere.dev e2e/flows",
-    "e2e:android": "maestro test --platform android -e APP_ID=com.sfdye.pasargowhere.dev e2e/flows",
-    "screenshots:ios": "maestro test --platform ios -e APP_ID=com.sfdye.pasargowhere.dev e2e/screenshots",
-    "screenshots:android": "maestro test --platform android -e APP_ID=com.sfdye.pasargowhere.dev e2e/screenshots",
+    "e2e": "maestro test -e APP_ID=com.sfdye.pasarwhere.dev e2e/flows",
+    "e2e:ios": "maestro test --platform ios -e APP_ID=com.sfdye.pasarwhere.dev e2e/flows",
+    "e2e:android": "maestro test --platform android -e APP_ID=com.sfdye.pasarwhere.dev e2e/flows",
+    "screenshots:ios": "maestro test --platform ios -e APP_ID=com.sfdye.pasarwhere.dev e2e/screenshots",
+    "screenshots:android": "maestro test --platform android -e APP_ID=com.sfdye.pasarwhere.dev e2e/screenshots",
     "metadata:ios": "fastlane ios metadata",
     "metadata:android": "fastlane android metadata",
     "metadata:pull:ios": "fastlane deliver download_metadata --force",

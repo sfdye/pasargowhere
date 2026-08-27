@@ -2,26 +2,36 @@ appId: ${APP_ID}
 tags: [screenshots-zh]
 ---
 # Screenshot capture flow for Chinese (zh-Hans) locale.
-# Adds a favourite in English first, switches to Chinese, captures all screens.
-# clearState in launch.yaml resets the app for the next run.
+# Switches to Chinese first, then adds a favourite, captures all screens.
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.
 - extendedWaitUntil:
     visible:
       id: discover-row
-    timeout: 20000
+    timeout: 60000
 
-# --- Setup: add Tiong Bahru Market as a favourite (while still in English) ---
+# --- Switch to Chinese first ---
+- tapOn:
+    id: tab-settings
+- waitForAnimationToEnd
+- tapOn:
+    id: row-language
+- waitForAnimationToEnd
+- tapOn:
+    id: lang-zh
+- waitForAnimationToEnd
+
+# --- Add Tiong Bahru Market as a favourite (in Chinese) ---
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
 - tapOn:
     id: add-markets
 - waitForAnimationToEnd
-- tapOn: "Search.*"
-- inputText: Tiong Bahru
-- tapOn: "Tiong Bahru Market"
+- tapOn: "搜索.*"
+- inputText: 中峇鲁
+- tapOn: "中峇鲁巴刹.*"
 - runFlow:
     when:
       platform: iOS
@@ -45,27 +55,16 @@ tags: [screenshots-zh]
     when:
       platform: Android
     commands:
-      - tapOn: "Navigate up"
+      - tapOn: "向上导航"
       - waitForAnimationToEnd
 
 # Dismiss the reminder prompt card if present.
 - runFlow:
     when:
-      visible: "Not now"
+      visible: "以后再说"
     commands:
-      - tapOn: "Not now"
+      - tapOn: "以后再说"
       - waitForAnimationToEnd
-
-# --- Switch to Chinese ---
-- tapOn:
-    id: tab-settings
-- waitForAnimationToEnd
-- tapOn:
-    id: row-language
-- waitForAnimationToEnd
-- tapOn:
-    id: lang-zh
-- waitForAnimationToEnd
 
 # Screenshot 1: Discover tab in Chinese.
 - tapOn:

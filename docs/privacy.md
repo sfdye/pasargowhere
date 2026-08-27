@@ -4,7 +4,7 @@ title: Privacy Policy
 
 # Privacy Policy
 
-**PasarGoWhere** — effective 21 August 2026
+**PasarWhere** — effective 21 August 2026
 
 ## The short version
 
@@ -30,8 +30,8 @@ The app collects no personal information. There are no accounts, no ads, and no 
 
 ## Changes
 
-Any change to this policy will be committed to this file in the app's [public repository](https://github.com/sfdye/pasargowhere).
+Any change to this policy will be committed to this file in the app's [public repository](https://github.com/sfdye/pasarwhere).
 
 ## Contact
 
-Open an issue at [github.com/sfdye/pasargowhere/issues](https://github.com/sfdye/pasargowhere/issues).
+Open an issue at [github.com/sfdye/pasarwhere/issues](https://github.com/sfdye/pasarwhere/issues).

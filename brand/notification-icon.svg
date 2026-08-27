@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- PasarGoWhere status-bar glyph: the awning alone, no bulb. Why, and why solid rather
+<!-- PasarWhere status-bar glyph: the awning alone, no bulb. Why, and why solid rather
      than the app icon's line art, is in brand/README.md. -->
 <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 96 96">
   <g fill="#ffffff">

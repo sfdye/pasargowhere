@@ -21,7 +21,7 @@ Those two are the whole of CI (`.github/workflows/test.yml`); there is no lint s
 `e2e/flows/` holds Maestro YAML; `e2e/utils/` holds shared subflows. `e2e/screenshots/` holds store-screenshot capture flows. Local-only — not in CI.
 
 - Install the CLI standalone (`brew tap mobile-dev-inc/tap && brew install maestro`); nothing goes in `package.json` dependencies. Requires Java 17+.
-- Run against the standalone dev build (`com.sfdye.pasargowhere.dev`): `APP_VARIANT=development npx expo run:ios --configuration Release` then `npm run e2e:ios`. Android: `--variant release` on an API ≤ 34 emulator.
+- Run against the standalone dev build (`com.sfdye.pasarwhere.dev`): `APP_VARIANT=development npx expo run:ios --configuration Release` then `npm run e2e:ios`. Android: `--variant release` on an API ≤ 34 emulator.
 - Flows target elements by `testID` (Maestro's `id:` selector), not by text — accessibility labels are localized. Add a `testID` to any new interactive element a flow needs to address.
 - Notifications, deep-link routing, and background refresh remain untestable in simulators.
 - Before marking a PR ready for review, prompt the user to run `npm run e2e:ios` and `npm run e2e:android` locally against a fresh dev build.
@@ -39,7 +39,7 @@ Those two are the whole of CI (`.github/workflows/test.yml`); there is no lint s
 
 ## Builds
 
-- `app.json` is the base config and the only place plugin config belongs. `app.config.ts` layers the dev variant over it (`.dev` ids, "PasarGoWhere Dev") when `APP_VARIANT=development`, which the `npm run` scripts and the EAS `development` profile set — so a release build is the one that sets nothing. Keep `slug` and `extra.eas.projectId` out of the override.
+- `app.json` is the base config and the only place plugin config belongs. `app.config.ts` layers the dev variant over it (`.dev` ids, "PasarWhere Dev") when `APP_VARIANT=development`, which the `npm run` scripts and the EAS `development` profile set — so a release build is the one that sets nothing. Keep `slug` and `extra.eas.projectId` out of the override.
 - The build number is two keys in `app.json` — `ios.buildNumber` (a string) and `android.versionCode` (a number) — which must stay equal. Bump only with `npm run release`; never by hand, and never re-add `autoIncrement`.
 - `production` is the TestFlight profile; TestFlight and the App Store take the same binary. Do not add a `testflight` profile or Expo's `preview` variant — the `apk` profile already covers internal testing.
 - EAS Update ships JS/assets over the air (translations, `zh-names` fixes). `runtimeVersion` policy `appVersion` makes the per-release `version` bump the OTA boundary; `production` carries `channel: "production"`, inherited by `apk`. `eas update` bundles the **working tree** (unlike `eas build`), so publish from a clean tree. Native deps, SDK upgrades, and `app.json` native config still need a store build. README's OTA section has the commands.

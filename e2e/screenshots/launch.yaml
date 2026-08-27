@@ -6,5 +6,12 @@ appId: ${APP_ID}
     latitude: 1.2834
     longitude: 103.8607
 - launchApp:
-    clearState: true
+    clearState: false
     permissions: { all: allow }
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Allow While Using App"
+    commands:
+      - tapOn: "Allow While Using App"
+      - waitForAnimationToEnd
