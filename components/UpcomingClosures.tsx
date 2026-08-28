@@ -1,8 +1,8 @@
 import { useMemo, useState } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 import Animated, { LinearTransition } from 'react-native-reanimated';
-import { Icon, Text } from './ui';
-import { getUpcomingClosures, type Market } from '../lib/core/market-logic';
+import { Icon, Text, type IconName } from './ui';
+import { getUpcomingClosures, type ClosureReason, type Market } from '../lib/core/market-logic';
 import { formatDateRange } from '../lib/date';
 import { closureReasonShort } from '../lib/status';
 import { useLang, useT, useToday } from '../lib/store';
@@ -10,6 +10,12 @@ import { radius, space, useTheme } from '../lib/theme';
 
 const HORIZON_DAYS = 90;
 const COLLAPSED_COUNT = 3;
+
+const CLOSURE_ICON: Record<ClosureReason, IconName> = {
+  cleaning: 'cleaning',
+  other_works: 'maintenance',
+  monday: 'time',
+};
 
 /** The next quarter of verified closures. Three are enough to plan around; the rest are one tap away. */
 export default function UpcomingClosures({ market }: { market: Market }) {
@@ -32,9 +38,10 @@ export default function UpcomingClosures({ market }: { market: Market }) {
       layout={LinearTransition}
       style={[styles.section, { backgroundColor: theme.colors.surface }, theme.shadow]}
     >
-      <Text variant="overline" tone="muted">
-        {t('upcoming').toUpperCase()}
-      </Text>
+      <View style={styles.header}>
+        <Icon name="calendar" size={16} color="textMuted" />
+        <Text variant="overline" tone="muted">{t('upcoming')}</Text>
+      </View>
       {closures.length === 0 ? (
         <Text variant="subhead" tone="muted">
           {t('noUpcoming')}
@@ -46,10 +53,13 @@ export default function UpcomingClosures({ market }: { market: Market }) {
               key={closure.date.getTime()}
               style={[styles.row, { borderTopColor: theme.colors.borderLight }]}
             >
-              <Text variant="subhead">{formatDateRange(closure.date, closure.endDate, lang)}</Text>
-              <Text variant="subhead" tone="muted" style={styles.reason}>
-                {closureReasonShort(closure.reason, closure.remarks, t)}
-              </Text>
+              <Text variant="subhead" style={styles.date}>{formatDateRange(closure.date, closure.endDate, lang)}</Text>
+              <View style={styles.reasonWrap}>
+                <Icon name={CLOSURE_ICON[closure.reason]} size={16} color="textMuted" />
+                <Text variant="subhead" tone="muted" style={styles.reason}>
+                  {closureReasonShort(closure.reason, closure.remarks, t)}
+                </Text>
+              </View>
             </View>
           ))}
           {closures.length > COLLAPSED_COUNT && (
@@ -78,6 +88,7 @@ export default function UpcomingClosures({ market }: { market: Market }) {
 
 const styles = StyleSheet.create({
   section: { gap: space.sm, padding: space.lg, borderRadius: radius.card },
+  header: { flexDirection: 'row', alignItems: 'center', gap: space.sm },
   row: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -86,6 +97,8 @@ const styles = StyleSheet.create({
     paddingTop: space.sm,
     borderTopWidth: StyleSheet.hairlineWidth,
   },
-  reason: { flexShrink: 1, textAlign: 'right' },
+  date: { flex: 1 },
+  reasonWrap: { flexDirection: 'row', alignItems: 'center', gap: space.xs, flexShrink: 1 },
+  reason: { textAlign: 'right' },
   more: { flexDirection: 'row', alignItems: 'center', gap: space.xs, paddingVertical: space.sm },
 });

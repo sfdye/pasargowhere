@@ -1,7 +1,8 @@
 import { StyleSheet, View } from 'react-native';
 import { Text } from './ui';
 import type { MarketStatus } from '../lib/core/market-logic';
-import { formatDate } from '../lib/date';
+import { getMarketHours, getTodayHoursLabel, type DayKey, type HoursDisplay } from '../lib/core/market-hours';
+import { DOW_SHORT, formatDate } from '../lib/date';
 import { reasonText, statusLabel, statusTone } from '../lib/status';
 import { useLang, useT } from '../lib/store';
 import { radius, space, useTheme } from '../lib/theme';
@@ -9,6 +10,7 @@ import { radius, space, useTheme } from '../lib/theme';
 const FILL = {
   open: 'statusOpen',
   warning: 'statusWarn',
+  soon: 'statusSoon',
   closed: 'statusClosed',
 } as const;
 
@@ -16,32 +18,77 @@ const FILL = {
 export default function StatusBanner({
   status,
   nextOpen,
+  hoursDisplay,
+  marketName,
 }: {
   status: MarketStatus;
   nextOpen: Date | null;
+  hoursDisplay?: HoursDisplay | null;
+  marketName?: string;
 }) {
   const theme = useTheme();
   const lang = useLang();
   const t = useT();
 
   const tone = statusTone(status);
+  const effectiveTone: 'open' | 'warning' | 'closed' | 'soon' =
+    hoursDisplay?.kind === 'closedByHours'
+      ? 'closed'
+      : hoursDisplay?.kind === 'opensSoon' || hoursDisplay?.kind === 'closesSoon'
+        ? 'soon'
+        : tone;
   const reason = reasonText(status, t);
+  const label = statusLabel(effectiveTone, t, hoursDisplay);
+
+  const DAY_KEY_TO_DOW: Record<string, number> = {
+    sun: 0, mon: 1, tue: 2, wed: 3, thu: 4, fri: 5, sat: 6,
+  };
+
+  const subtitle =
+    hoursDisplay?.kind === 'open' && hoursDisplay.closesAt
+      ? t('closesAt', { time: hoursDisplay.closesAt })
+      : hoursDisplay?.kind === 'closesSoon' && hoursDisplay.closesAt
+        ? t('closesSoon', { time: hoursDisplay.closesAt })
+        : hoursDisplay?.kind === 'opensSoon' && hoursDisplay.opensAt
+          ? t('opensSoon', { time: hoursDisplay.opensAt })
+          : hoursDisplay?.kind === 'closedByHours' && hoursDisplay.opensAt
+            ? t('opensAt', {
+                time: hoursDisplay.opensAt,
+                day: hoursDisplay.opensAtDay
+                  ? lang === 'zh'
+                    ? DOW_SHORT.zh[DAY_KEY_TO_DOW[hoursDisplay.opensAtDay]]
+                    : ' ' + DOW_SHORT.en[DAY_KEY_TO_DOW[hoursDisplay.opensAtDay]]
+                  : '',
+              })
+            : null;
 
   return (
-    <View style={[styles.banner, { backgroundColor: theme.colors[FILL[tone]] }]}>
+    <View style={[styles.banner, { backgroundColor: theme.colors[FILL[effectiveTone]] }]}>
       <Text variant="title" tone="onStatus" style={styles.centered}>
-        {statusLabel(tone, t)}
+        {label}
       </Text>
-      {!!reason && (
+      {!!subtitle && (
+        <Text variant="subhead" tone="onStatus" style={[styles.centered, styles.dim]}>
+          {subtitle}
+        </Text>
+      )}
+      {!!reason && !subtitle && (
         <Text variant="subhead" tone="onStatus" style={styles.centered}>
           {reason}
         </Text>
       )}
-      {!!nextOpen && (
-        <Text variant="subhead" tone="onStatus" style={[styles.centered, styles.dim]}>
-          {t('opensAgain')} {formatDate(nextOpen, lang)}
-        </Text>
-      )}
+      {!!nextOpen && effectiveTone === 'closed' && !subtitle && (() => {
+        const hours = marketName ? getMarketHours(marketName) : null;
+        const openTime = hours ? getTodayHoursLabel(hours, nextOpen.getDay()) : null;
+        const timeStr = openTime ? openTime.split(/[–-]/)[0]?.trim() : null;
+        const dayStr = DOW_SHORT[lang][nextOpen.getDay()];
+        const dateStr = formatDate(nextOpen, lang);
+        return (
+          <Text variant="subhead" tone="onStatus" style={[styles.centered, styles.dim]}>
+            {t('opensAgain', { time: timeStr ?? '', day: dayStr, date: dateStr })}
+          </Text>
+        );
+      })()}
     </View>
   );
 }

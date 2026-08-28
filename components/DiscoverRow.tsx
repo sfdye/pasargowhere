@@ -4,6 +4,7 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { Icon, Text } from './ui';
 import { parseMarketName } from '../lib/core/market-logic';
+import { resolveHoursDisplay, sgMinutes } from '../lib/core/market-hours';
 import type { Market } from '../lib/core/market-logic';
 import type { Lang } from '../lib/i18n';
 import { formatDistance, getDisplayName, getMarketDistance } from '../lib/markets';
@@ -27,6 +28,18 @@ function DiscoverRowInner({
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
   const dist = getMarketDistance(market, coords?.lat ?? null, coords?.lng ?? null);
+
+  const hoursDisplay = resolveHoursDisplay(market.name, new Date().getDay(), sgMinutes());
+  const isOpen = hoursDisplay.kind === 'open' || hoursDisplay.kind === 'open24h';
+  const isSoon = hoursDisplay.kind === 'opensSoon' || hoursDisplay.kind === 'closesSoon';
+  const showStatus = hoursDisplay.kind !== 'noData';
+  const statusLabel = isSoon
+    ? lang === 'zh'
+      ? (hoursDisplay.kind === 'opensSoon' ? '即将开始营业' : '即将结束营业')
+      : (hoursDisplay.kind === 'opensSoon' ? 'Opens soon' : 'Closes soon')
+    : isOpen
+      ? lang === 'zh' ? '正在营业' : 'Open'
+      : lang === 'zh' ? '已结束营业' : 'Closed';
 
   return (
     <Pressable
@@ -58,10 +71,24 @@ function DiscoverRowInner({
             {parsed.street}
           </Text>
         )}
-        {dist !== null && (
-          <Text variant="subhead" tone="muted">
-            {formatDistance(dist)}
-          </Text>
+        {(dist !== null || showStatus) && (
+          <View style={styles.metaRow}>
+            {dist !== null && (
+              <Text variant="subhead" tone="muted">
+                {formatDistance(dist)}
+              </Text>
+            )}
+            {showStatus && (
+              <>
+                {dist !== null && (
+                  <Text variant="subhead" tone="muted"> · </Text>
+                )}
+                <Text variant="subhead" tone={isSoon ? 'warning' : isOpen ? 'accent' : 'danger'}>
+                  {statusLabel}
+                </Text>
+              </>
+            )}
+          </View>
         )}
       </View>
       <Icon name="chevron" size={18} color="textFaint" />
@@ -83,4 +110,5 @@ const styles = StyleSheet.create({
   },
   thumb: { width: THUMB_SIZE, height: THUMB_SIZE, borderRadius: radius.thumb },
   info: { flex: 1, gap: 2, minWidth: 0 },
+  metaRow: { flexDirection: 'row', alignItems: 'center' },
 });
