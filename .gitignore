@@ -56,3 +56,7 @@ fastlane/README.md
 
 # lib/ here is source, not build output — some global ignore files exclude it by convention
 !/lib/
+
+# scripts — generated output from hours fetcher
+scripts/nea-markets.json
+scripts/market-hours-api.json
