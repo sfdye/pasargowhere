@@ -34,6 +34,8 @@ const GLYPHS = {
   locate: 'locate',
 
   location: 'location-outline',
+  time: 'time-outline',
+  calendar: 'calendar-outline',
   stall: 'basket-outline',
   food: 'restaurant-outline',
   bell: 'notifications',
@@ -42,6 +44,7 @@ const GLYPHS = {
   warning: 'warning',
   info: 'information-circle-outline',
   cleaning: 'water-outline',
+  maintenance: 'build-outline',
 
   general: 'options-outline',
   appearance: 'contrast-outline',

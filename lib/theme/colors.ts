@@ -31,6 +31,7 @@ export interface Palette {
 
   statusOpen: string;
   statusWarn: string;
+  statusSoon: string;
   statusClosed: string;
   /** Text and icons drawn on any of the status fills. */
   statusOn: string;
@@ -66,6 +67,7 @@ export const lightColors: Palette = {
 
   statusOpen: '#2e7d32',
   statusWarn: '#e65100',
+  statusSoon: '#f57c00',
   statusClosed: '#c62828',
   statusOn: '#ffffff',
 
@@ -102,6 +104,7 @@ export const darkColors: Palette = {
 
   statusOpen: '#2e7d32',
   statusWarn: '#e65100',
+  statusSoon: '#f57c00',
   statusClosed: '#c62828',
   statusOn: '#ffffff',
 
