@@ -7,7 +7,7 @@ import StatusPill from './StatusPill';
 import SwipeToDeleteRow, { Pressable } from './SwipeToDeleteRow';
 import { Icon, Text } from './ui';
 import { getMarketStatus, parseMarketName } from '../lib/core/market-logic';
-import { resolveHoursDisplay, sgMinutes, sgDayOfWeek } from '../lib/core/market-hours';
+import { resolveHoursDisplay, sgMinutes } from '../lib/core/market-hours';
 import { formatDate } from '../lib/date';
 import { getDisplayName, getNextCleaningDate } from '../lib/markets';
 import { statusLabel, statusTone, type StatusTone } from '../lib/status';

@@ -1,5 +1,3 @@
-import type { MarketStatus } from './market-logic.ts';
-
 const SGT_OFFSET_MS = 8 * 60 * 60 * 1000;
 
 export type DayKey = 'mon' | 'tue' | 'wed' | 'thu' | 'fri' | 'sat' | 'sun';
