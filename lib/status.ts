@@ -1,22 +1,34 @@
 import type { MarketStatus, NotifiableReason } from './core/market-logic';
+import type { HoursDisplay } from './core/market-hours';
 import { decodeEntities } from './markets';
 import type { Translate } from './store';
 
-export type StatusTone = 'open' | 'warning' | 'closed';
+export type StatusTone = 'open' | 'warning' | 'closed' | 'soon';
 
 export function statusTone(status: MarketStatus): StatusTone {
   return status.status === 'open' ? 'open' : status.status === 'warning' ? 'warning' : 'closed';
 }
 
 const LABELS = { open: 'openToday', warning: 'warningToday', closed: 'closedToday' } as const;
+const TIME_LABELS = { open: 'openNow', closed: 'closedNow' } as const;
 
 /**
- * The label on a pill or banner: OPEN TODAY / MOST STALLS CLOSED / CLOSED TODAY. Day-scoped
- * rather than "OPEN", because the dataset has closure dates and no opening hours — a bare "OPEN"
- * claims the market is serving right now, which the app has no way to know.
+ * The label on a pill or banner: OPEN / CLOSED / MOST STALLS CLOSED.
+ * When hours data is available, OPEN 24H replaces OPEN for 24-hour markets.
  */
-export function statusLabel(tone: StatusTone, t: Translate): string {
-  return t(LABELS[tone]);
+export function statusLabel(
+  tone: StatusTone,
+  t: Translate,
+  hoursDisplay?: HoursDisplay | null
+): string {
+  if (hoursDisplay?.kind === 'opensSoon') return t('closedNow');
+  if (hoursDisplay?.kind === 'closesSoon') return t('openNow');
+  if (tone === 'warning') return t(LABELS.warning);
+  if (tone === 'closed') return t(LABELS.closed);
+  // tone === 'open'
+  if (hoursDisplay?.kind === 'open24h') return t('open24h');
+  if (hoursDisplay && hoursDisplay.kind !== 'noData') return t(TIME_LABELS.open);
+  return t(LABELS.open);
 }
 
 /** Why the market is in this state, one line. Empty when it is simply open. */

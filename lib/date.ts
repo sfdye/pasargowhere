@@ -7,7 +7,8 @@ export { sgToday, sgInstant, civilKey } from './core/reminder-schedule';
 // Hand-rolled rather than Intl.DateTimeFormat: Hermes on Android leans on whatever ICU data the
 // device ships, so the same date can come back differently across phones. These 24 lines don't.
 
-const DAYS_SHORT = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], zh: ['日', '一', '二', '三', '四', '五', '六'] };
+const DAYS_SHORT = { en: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'], zh: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'] };
+export const DOW_SHORT = DAYS_SHORT;
 const DAYS_LONG = { en: ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'], zh: ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'] };
 const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 const MONTHS_LONG = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
@@ -36,5 +37,6 @@ export function formatDateLong(date: Date, lang: Lang): string {
 /** Formats a single date, or a range when `endDate` differs from `date`. */
 export function formatDateRange(date: Date, endDate: Date | undefined, lang: Lang): string {
   if (!endDate || endDate.getTime() === date.getTime()) return formatDate(date, lang);
-  return `${formatDate(date, lang)} – ${formatDate(endDate, lang)}`;
+  const sep = lang === 'zh' ? ' ~ ' : ' – ';
+  return `${formatDate(date, lang)}${sep}${formatDate(endDate, lang)}`;
 }
