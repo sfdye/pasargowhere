@@ -5,11 +5,15 @@ derived and gets overwritten. Nothing here ships: `assetBundlePatterns` only dec
 which *resolved* assets get bundled, so what keeps the 135 KB master out of the app is
 simply that no code `require`s it.
 
-`icon-master-1024.png` is the approved mark: a market-stall awning with a lit bulb
-above it, white line art on green. It reads as *the place* rather than as a product,
-which is what makes it cover cooked-food centres and wet markets alike, and the bulb
-carries the "open" idea in pure shape — so the mark survives Android's themed-icon
-layer and iOS's tinted variant, both of which throw colour away.
+`icon-master-1024.png` is the approved mark: a market-stall awning, white line art on
+green. It reads as *the place* rather than as a product, which is what makes it cover
+cooked-food centres and wet markets alike, and as pure shape it survives Android's
+themed-icon layer and iOS's tinted variant, both of which throw colour away.
+
+The art is deliberately oversized, and shrinking it is a regression, not a restyle:
+minimal padding keeps the awning recognizable at home-screen sizes, the thick white
+strokes hold contrast against the green for senior eyes, and the ground bleeds edge
+to edge so the icon sits seamlessly beside other modern apps.
 
 ## Regenerating `assets/`
 
@@ -40,12 +44,8 @@ transparent tinted master would render as a white rectangle.
 
 The notification glyph is the one asset that is *not* mechanically derived. Downscaling
 the app-icon art turns the line work to mush at 24dp, so `notification-icon.svg` is a
-hand-drawn solid silhouette — and it drops the bulb, for a reason worth not
-rediscovering: a solid bulb above a solid canopy fuses at 24dp and the pair reads as
-head-and-shoulders. Shrinking the bulb far enough to separate just leaves a head-shaped
-dot. The awning alone is unambiguous, and it is the app icon's dominant shape, so the two
-still look like the same app. The deep scallop fringe is what makes it a canopy at that
-size; it is the first thing to lose if the lobes are flattened.
+hand-drawn solid silhouette of the awning. The deep scallop fringe is what makes it a
+canopy at that size; it is the first thing to lose if the lobes are flattened.
 
 ## If the mark is ever revised
 

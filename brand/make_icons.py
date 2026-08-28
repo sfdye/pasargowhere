@@ -14,6 +14,7 @@ OUT_DIR = Path('assets')
 
 CANVAS = 1024
 EDGE_MARGIN = 12             # how far above the ground's luma a pixel must be to count as art
+NOISE = 16                   # per-channel wobble the master's ground is allowed to have
 BRAND_GREEN = (46, 125, 50)  # #2e7d32 — the shipped icon's ground, not the master's
 WHITE = (255, 255, 255)
 DILATE_RADIUS = 3            # 27px stroke -> 33px, i.e. 2.6% -> 3.2% of the canvas
@@ -21,20 +22,23 @@ SAFE_CIRCLE_DIA = 625        # Material's 66dp keyline on a 1024px/108dp canvas
 ART = 8                      # alpha above which a pixel counts as art
 HOLE = 64                    # alpha below which a pixel counts as background
 # Spread across the ground, all clear of the art's bounding box.
-GROUND_PROBES = [(128, 512), (896, 512), (512, 64), (512, 960)]
+GROUND_PROBES = [(64, 512), (960, 512), (512, 128), (512, 896)]
 
 
 def read_ground(src):
-    """The master's flat background colour, asserting it really is flat.
+    """The master's background colour, asserting it really is one colour.
 
-    A gradient, a stray colour profile or an export over the wrong backdrop all show up
-    as probes that disagree — and any of them would make the matte threshold below
-    meaningless, so this is the one property of the master worth checking.
+    The master's ground carries export noise (±8 per channel), so probes will not be
+    identical — but a gradient, a stray colour profile or an export over the wrong
+    backdrop show up as probes that disagree by far more than the noise floor, and any
+    of them would make the matte threshold below meaningless. Returns the channel-wise
+    mean, which is close enough for a threshold EDGE_MARGIN above the noise's peak luma.
     """
-    seen = {src.getpixel(p) for p in GROUND_PROBES}
-    if len(seen) != 1:
-        raise SystemExit(f'master ground is not flat: probes gave {sorted(seen)}')
-    return seen.pop()
+    probes = [src.getpixel(p) for p in GROUND_PROBES]
+    channels = zip(*probes)
+    if any(max(c) - min(c) > NOISE for c in channels):
+        raise SystemExit(f'master ground is not flat: probes gave {sorted(set(probes))}')
+    return tuple(round(sum(c) / len(c)) for c in zip(*probes))
 
 
 def luma(rgb):
@@ -43,10 +47,15 @@ def luma(rgb):
     return (r * 19595 + g * 38470 + b * 7471 + 0x8000) >> 16
 
 
+def close(p, ground):
+    """Within the ground's noise floor — the ground is not one exact colour."""
+    return all(abs(a - b) <= NOISE for a, b in zip(p, ground))
+
+
 def corner_radius(src, ground):
     """Row 0 crosses the white surround, then the rounded rect: that x is the radius."""
     for x in range(src.size[0]):
-        if src.getpixel((x, 0)) == ground:
+        if close(src.getpixel((x, 0)), ground):
             return x
     raise SystemExit('no rounded rect on row 0 — is this the right master?')
 
@@ -156,7 +165,7 @@ def main():
     before = enclosed_area(raw)
     grown = dilate(raw, DILATE_RADIUS)
     after = enclosed_area(grown)
-    # Dilating for legibility must not fill the bulb interior or the valance scallops.
+    # Dilating for legibility must not fill the canopy panels or the valance scallops.
     # They are ~⅓ of the counter area between them, so losing one shows up well below 0.7.
     if after < before * 0.7:
         raise SystemExit(f'dilation closed a counter: enclosed area {before} -> {after}')
