@@ -10,6 +10,11 @@ green. It reads as *the place* rather than as a product, which is what makes it 
 cooked-food centres and wet markets alike, and as pure shape it survives Android's
 themed-icon layer and iOS's tinted variant, both of which throw colour away.
 
+The art is deliberately oversized, and shrinking it is a regression, not a restyle:
+minimal padding keeps the awning recognizable at home-screen sizes, the thick white
+strokes hold contrast against the green for senior eyes, and the ground bleeds edge
+to edge so the icon sits seamlessly beside other modern apps.
+
 ## Regenerating `assets/`
 
 ```sh
