@@ -6,10 +6,11 @@ import StatusPill from './StatusPill';
 // Pressable comes from the wrapper, not react-native — see its export.
 import SwipeToDeleteRow, { Pressable } from './SwipeToDeleteRow';
 import { Icon, Text } from './ui';
-import { getMarketStatus, getNextOpenDate, parseMarketName } from '../lib/core/market-logic';
+import { getMarketStatus, parseMarketName } from '../lib/core/market-logic';
+import { resolveHoursDisplay, sgMinutes } from '../lib/core/market-hours';
 import { formatDate } from '../lib/date';
 import { getDisplayName, getNextCleaningDate } from '../lib/markets';
-import { statusLabel, statusTone } from '../lib/status';
+import { statusLabel, statusTone, type StatusTone } from '../lib/status';
 import { removeFavorite, useLang, useMarket, useT, useToday } from '../lib/store';
 import { COMPACT_FONT_SCALE, radius, space, useTheme } from '../lib/theme';
 
@@ -36,15 +37,25 @@ function MarketRowInner({ name }: { name: string }) {
   const displayName = getDisplayName(parsed, lang);
   const status = getMarketStatus(market, today);
   const tone = statusTone(status);
-  const label = statusLabel(tone, t);
 
-  const nextOpen = tone === 'closed' ? getNextOpenDate(market, today) : null;
-  const nextCleaning = tone === 'closed' ? null : getNextCleaningDate(market, today);
-  const next = nextOpen
-    ? `${t('opensAgain')} ${formatDate(nextOpen, lang)}`
-    : nextCleaning
-      ? `${t('nextClosure')} ${formatDate(nextCleaning, lang)}`
-      : '';
+  const hoursDisplay =
+    status.status === 'open'
+      ? resolveHoursDisplay(market.name, today.getDay(), sgMinutes())
+      : null;
+
+  const effectiveTone: StatusTone =
+    hoursDisplay?.kind === 'closedByHours'
+      ? 'closed'
+      : hoursDisplay?.kind === 'opensSoon' || hoursDisplay?.kind === 'closesSoon'
+        ? 'soon'
+        : tone;
+  const label = statusLabel(effectiveTone, t, hoursDisplay);
+
+  const nextCleaning = getNextCleaningDate(market, today);
+
+  const subhead = nextCleaning
+    ? `${t('nextClosure')} ${formatDate(nextCleaning, lang)}`
+    : '';
 
   // Keep the status on the same visual row at accessibility sizes. The compact hierarchy buys the
   // pill enough width without capping anything: every label still follows its UIKit type ramp.
@@ -57,7 +68,7 @@ function MarketRowInner({ name }: { name: string }) {
         onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
         accessibilityRole="button"
         testID="market-row"
-        accessibilityLabel={[displayName, label, next].filter(Boolean).join('. ')}
+        accessibilityLabel={[displayName, label, subhead].filter(Boolean).join('. ')}
         accessibilityHint={t('details')}
         accessibilityActions={[{ name: 'delete', label: t('removeFav') }]}
         onAccessibilityAction={(event) => {
@@ -81,15 +92,15 @@ function MarketRowInner({ name }: { name: string }) {
           )}
           <View style={styles.info}>
             <Text variant={compact ? 'bodyStrong' : 'headline'}>{displayName}</Text>
-            {!!next && (
+            {!!subhead && (
               <Text variant={compact ? 'footnote' : 'subhead'} tone="muted">
-                {next}
+                {subhead}
               </Text>
             )}
           </View>
         </View>
         <View style={styles.trailing}>
-          <StatusPill tone={tone} label={label} compact={compact} style={styles.pill} />
+          <StatusPill tone={effectiveTone} label={label} compact={compact} style={styles.pill} />
           <Icon name="chevron" size={18} color="textFaint" />
         </View>
       </Pressable>

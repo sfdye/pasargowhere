@@ -7,6 +7,7 @@ import StatusBanner from '../../components/StatusBanner';
 import UpcomingClosures from '../../components/UpcomingClosures';
 import { Card, EmptyState, Icon, Text } from '../../components/ui';
 import { getMarketStatus, getNextOpenDate, parseMarketName } from '../../lib/core/market-logic';
+import { resolveHoursDisplay, sgMinutes, getTodayHoursLabel, getMarketHours } from '../../lib/core/market-hours';
 import { famousBlurb, isFamous } from '../../lib/core/famous';
 import { openInMaps } from '../../lib/maps';
 import { decodeEntities, getDisplayName, marketCoords } from '../../lib/markets';
@@ -50,11 +51,19 @@ export default function MarketDetailScreen() {
   const displayName = getDisplayName(parsed, lang);
   const status = getMarketStatus(market, today);
   const tone = statusTone(status);
-  const nextOpen = tone === 'closed' ? getNextOpenDate(market, today) : null;
+  const hoursDisplay =
+    status.status === 'open'
+      ? resolveHoursDisplay(market.name, today.getDay(), sgMinutes())
+      : null;
+  const effectiveTone = hoursDisplay?.kind === 'closedByHours' || hoursDisplay?.kind === 'opensSoon'
+    ? 'closed'
+    : tone;
+  const nextOpen = effectiveTone === 'closed' ? getNextOpenDate(market, today) : null;
+  const todayHoursLabel = getTodayHoursLabel(getMarketHours(market.name) ?? {}, today.getDay());
   const address = market.address_myenv ? decodeEntities(market.address_myenv) : '';
   const description = market.description_myenv ? decodeEntities(market.description_myenv) : '';
   const coords = marketCoords(market);
-  const showPlaceCard = !!address || hasStallCounts(market);
+  const showPlaceCard = !!address || hasStallCounts(market) || !!todayHoursLabel;
 
   const openAddress = () => {
     if (!coords) return;
@@ -102,14 +111,15 @@ export default function MarketDetailScreen() {
           </View>
         )}
 
-        <StatusBanner status={status} nextOpen={nextOpen} />
+        <StatusBanner status={status} nextOpen={nextOpen} hoursDisplay={hoursDisplay} marketName={market.name} />
 
-        {/* Detail only, and only under an open banner: that is the claim a reader can mistake for
-            "serving now", and this is the screen they came to to find out. A pill on Today or on a
-            map callout is a glance, and carrying the caveat there would drown it. */}
         {tone !== 'closed' && (
           <Text variant="footnote" tone="faint" style={styles.hoursNote}>
-            {t(status.status === 'warning' ? 'hoursNoteMonday' : 'hoursNote')}
+            {todayHoursLabel
+              ? t('hoursNote')
+              : status.status === 'warning'
+                ? t('hoursNoteMonday')
+                : t('hoursNoteNoData')}
           </Text>
         )}
 
@@ -134,11 +144,27 @@ export default function MarketDetailScreen() {
                 {!!coords && <Icon name="chevron" size={16} color="textFaint" />}
               </Pressable>
             )}
+            {!!todayHoursLabel && (
+              <View
+                style={[
+                  styles.hoursRow,
+                  (!!address || hasStallCounts(market)) && {
+                    borderTopWidth: StyleSheet.hairlineWidth,
+                    borderTopColor: theme.colors.borderLight,
+                  },
+                ]}
+              >
+                <Icon name="time" color="textMuted" />
+                <Text variant="subhead" tone="muted">
+                  {todayHoursLabel}
+                </Text>
+              </View>
+            )}
             {hasStallCounts(market) && (
               <View
                 style={[
                   styles.stalls,
-                  !!address && {
+                  (!!address || !!todayHoursLabel) && {
                     borderTopWidth: StyleSheet.hairlineWidth,
                     borderTopColor: theme.colors.borderLight,
                   },
@@ -152,7 +178,7 @@ export default function MarketDetailScreen() {
 
         {!!description && (
           <Card style={styles.about}>
-            <Text variant="overline" tone="faint" style={styles.aboutTitle}>
+            <Text variant="overline" tone="muted" style={styles.aboutTitle}>
               {t('aboutMarket')}
             </Text>
             <Text
@@ -213,6 +239,12 @@ const styles = StyleSheet.create({
   hoursNote: { paddingHorizontal: space.sm },
   place: { overflow: 'hidden' },
   addressRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: space.md,
+    padding: space.lg,
+  },
+  hoursRow: {
     flexDirection: 'row',
     alignItems: 'center',
     gap: space.md,

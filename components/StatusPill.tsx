@@ -3,9 +3,10 @@ import { Text } from './ui';
 import type { StatusTone } from '../lib/status';
 import { radius, space, useTheme } from '../lib/theme';
 
-const FILL: Record<StatusTone, 'statusOpen' | 'statusWarn' | 'statusClosed'> = {
+const FILL: Record<StatusTone, 'statusOpen' | 'statusWarn' | 'statusSoon' | 'statusClosed'> = {
   open: 'statusOpen',
   warning: 'statusWarn',
+  soon: 'statusSoon',
   closed: 'statusClosed',
 };
 
