@@ -43,6 +43,9 @@ yarn-error.*
 # typescript
 *.tsbuildinfo
 
+# git worktrees — local checkouts with their own node_modules, never needed by EAS
+.worktrees/
+
 # tooling
 .playwright-mcp/
 .claude/
