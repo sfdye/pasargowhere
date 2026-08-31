@@ -125,7 +125,7 @@ Closure reasons are worded once, in `lib/core/reason-words.ts` (in core because 
 
 Famous-pasar blurbs follow the same pattern: `lib/core/famous.ts` holds `FAMOUS_PASARS` (ordered by editorial rank) with a `Record<Lang, string>` blurb per entry — both languages in core so a missing translation fails typecheck. Keys are the *friendly* name as it appears in the NEA dataset (verified against the live API), not the common name.
 
-Language resolution: `state.langPref` (`Lang | 'system'`) is the choice, `lang` follows from it, resolved through `lib/lang.ts` (separate module so headless `background.ts` can reach it without the store). Three rules: a missing `oa_lang` means `'system'` (`loadLangPref` returns it rather than `null` — `?? 'en'` once sent English reminders to Chinese phones); membership of the supported set is `isLang()`, never `=== 'en' || === 'zh'`; re-passing an unchanged `langPref` to `setState` re-resolves deliberately (that's how foreground picks up a device-language change).
+Language resolution: `state.langPref` (`Lang | 'system'`) is the choice, `lang` follows from it, resolved through `lib/lang.ts` (separate module so headless `background.ts` can reach it without the store). Three rules: a missing `pg_lang` means `'system'` (`loadLangPref` returns it rather than `null` — `?? 'en'` once sent English reminders to Chinese phones); membership of the supported set is `isLang()`, never `=== 'en' || === 'zh'`; re-passing an unchanged `langPref` to `setState` re-resolves deliberately (that's how foreground picks up a device-language change).
 
 ## Dataset handling
 
@@ -135,6 +135,6 @@ Language resolution: `state.langPref` (`Lang | 'system'`) is the choice, `lang` 
 - A market can leave the dataset: favourites pointing at a missing market are pruned on load, and `useMarket` returns `null`. Handle that in any new screen.
 - `MAX_FAVORITES` (`lib/core/favorites.ts`) caps the list; it's a reminder-queue bound alongside `HORIZON_DAYS` and `MAX_SCHEDULED_REMINDERS`, and `reminder-schedule.test.ts` asserts a full list still fits. Enforcement is at the add only; removal always works. `toggleFavorite` raises the limit Alert itself.
 - `fetchMarketsFromAPI` returns `null` rather than throwing (10s timeout, one retry); the caller falls back to the cache and sets `stale`.
-- AsyncStorage keys are namespaced `oa_`. Nothing migrates older prefixes — the bundle identifier changed with each rename, so those installs are different apps.
+- AsyncStorage keys are namespaced `pg_`.
 - One NEA row = one closure schedule = one notification source = one favourite. Do not merge rows that are separate blocks (even if same complex — NEA describes them as "standalone" with different addresses) or split combined rows (one building, one schedule). The dataset is 123 rows for a reason.
 - Discover wet/food filter is presence-based, not ratio-based (`getMarketCategories` in `lib/core/market-category.ts`): any row with market stalls appears under "wet", any with food stalls under "food". A combined centre shows in both.

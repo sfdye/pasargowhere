@@ -5,20 +5,18 @@ import { parseMapView, type MapView } from './core/map-view';
 import { isThemeScheme, type ThemePref } from './core/theme-pref';
 import type { LangPref } from './lang';
 
-// Namespaced `oa_`. Nothing migrates the `moa_`/`poa_` keys these were renamed from across two
-// rebrands: the bundle identifier changed with them each time, so an install holding the old keys
-// is a different app with a container this one cannot see.
+// Namespaced `pg_`.
 const KEYS = {
-  favorites: 'oa_favorites',
-  data: 'oa_data',
-  fetched: 'oa_fetched',
-  lang: 'oa_lang',
-  mapProvider: 'oa_map_provider',
-  mapView: 'oa_map_view',
-  reminders: 'oa_reminders_enabled',
-  reminderCardDismissed: 'oa_reminder_card_dismissed',
-  theme: 'oa_theme',
-  screenshotDate: 'oa_screenshot_date',
+  favorites: 'pg_favorites',
+  data: 'pg_data',
+  fetched: 'pg_fetched',
+  lang: 'pg_lang',
+  mapProvider: 'pg_map_provider',
+  mapView: 'pg_map_view',
+  reminders: 'pg_reminders_enabled',
+  reminderCardDismissed: 'pg_reminder_card_dismissed',
+  theme: 'pg_theme',
+  screenshotDate: 'pg_screenshot_date',
 } as const;
 
 // Region events can arrive close together; queue writes so an older view can never finish after a
