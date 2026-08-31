@@ -84,7 +84,7 @@ Status is a *civil date* question, so the app never mixes instants with calendar
 
 ## Notifications
 
-`lib/core/reminder-schedule.ts` builds the schedule purely (`buildSchedule`); `lib/notifications.ts` hands it to expo-notifications. Closures are grouped one entry per date (five favourites closing the same day → one notification), and each date gets two reminders: 7pm the evening before, 6am the morning of. `getUpcomingClosures` returns only verified closures (cleaning, other works) — Monday warnings are excluded at the source, so reminders and the upcoming-closures list never contain them.
+`lib/core/reminder-schedule.ts` builds the schedule purely (`buildSchedule`); `lib/notifications.ts` hands it to expo-notifications. Closures are grouped one entry per date (five favourites closing the same day → one notification), and each date gets two reminders: 7pm the evening before, 6am the morning of. Closures ≤ `LONG_CLOSURE_DAYS` (7) expand to daily pairs; longer closures notify only on their genuine first day — probed by checking whether the previous day was also closed, since `getUpcomingClosures` starts scanning tomorrow and would otherwise manufacture a fresh "first day" every rebuild. `getUpcomingClosures` returns only verified closures (cleaning, other works) — Monday warnings are excluded at the source, so reminders and the upcoming-closures list never contain them.
 
 iOS silently keeps only the ~64 soonest pending requests, so `rescheduleAll` caps at 56 and cancels-then-rebuilds every time; the daily background task (`lib/background.ts`) tops the queue up as near ones fire. Background refresh is best-effort — cold-start rescheduling in the store is the reliable path, not the task.
 
