@@ -1,4 +1,4 @@
-import { getUpcomingClosures, parseMarketName } from './market-logic.ts';
+import { getMarketStatus, getUpcomingClosures, parseMarketName } from './market-logic.ts';
 import type { ClosureReason, Lang, Market } from './market-logic.ts';
 import { REASON_WORDS } from './reason-words.ts';
 import { zhNames } from './zh-names.ts';
@@ -47,6 +47,17 @@ export const HORIZON_DAYS = 90;
  * bound the app really applies instead of the raw ceiling.
  */
 export const MAX_SCHEDULED_REMINDERS = 56;
+
+/**
+ * Closures at or below this many days get a reminder pair for each day (a 3-day cleaning
+ * fires six notifications). Longer closures — renovations, multi-month other works — notify
+ * only on their genuine first day: the user learned the market is shut on day 1 and doesn't
+ * need a daily "still closed" ping for the next 90.
+ *
+ * The dataset has a hard cliff at 5 days (every cleaning is ≤5; other works are either ≤5 or
+ * ≥15), so any threshold from 6–14 behaves identically. 7 is the one-week boundary.
+ */
+export const LONG_CLOSURE_DAYS = 7;
 
 // Two reminders per closure date, in SGT: after dinner the evening before, and early enough
 // the next morning to catch someone before they set out.
@@ -111,10 +122,26 @@ export function groupClosuresByDate(
     if (!market) continue;
 
     for (const closure of getUpcomingClosures(market, HORIZON_DAYS, today)) {
-      // A closure may span a range (e.g. a 3-day cleaning or a multi-year renovation);
-      // expand it back to individual dates so each day gets its own notification group.
       const end = closure.endDate ?? closure.date;
-      for (let d = new Date(closure.date); d <= end; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)) {
+      const span = Math.round((end.getTime() - closure.date.getTime()) / 86400000) + 1;
+
+      // Long closures notify only on the genuine first day. `getUpcomingClosures` starts
+      // scanning the day after today, so an in-progress renovation reappears every rebuild
+      // with `closure.date` = tomorrow — probe the previous day: if it was also closed,
+      // the genuine start has already passed and the user was notified then (or favourited
+      // the market mid-renovation and can see the status in-app).
+      let effectiveEnd = end;
+      if (span > LONG_CLOSURE_DAYS) {
+        const dayBefore = new Date(
+          closure.date.getFullYear(),
+          closure.date.getMonth(),
+          closure.date.getDate() - 1
+        );
+        if (getMarketStatus(market, dayBefore).status === 'closed') continue;
+        effectiveEnd = closure.date;
+      }
+
+      for (let d = new Date(closure.date); d <= effectiveEnd; d = new Date(d.getFullYear(), d.getMonth(), d.getDate() + 1)) {
         const key = civilKey(d);
         let group = groups.get(key);
         if (!group) {
@@ -133,7 +160,30 @@ export function groupClosuresByDate(
   return [...groups.values()].sort((a, b) => a.date.getTime() - b.date.getTime());
 }
 
-/** Bilingual notification copy, with a separate variant for maintenance closures. */
+interface NotificationCopy {
+  title(when: 'today' | 'tomorrow', why: string): string;
+  body(names: string, when: 'today' | 'tomorrow'): string;
+}
+
+const NOTIFICATION_COPY: Record<Lang, NotificationCopy> = {
+  en: {
+    title: (when, why) =>
+      when === 'today' ? `🚫 Closed today ${why}` : `⚠️ Closed tomorrow ${why}`,
+    body: (names, when) =>
+      when === 'today'
+        ? `${names} is closed — don't make the trip!`
+        : `${names} is closed tomorrow — plan another day.`,
+  },
+  zh: {
+    title: (when, why) =>
+      when === 'today' ? `🚫 今天不营业（${why}）` : `⚠️ 明天不营业（${why}）`,
+    body: (names, when) =>
+      when === 'today'
+        ? `${names} 今天不营业 — 别白跑一趟！`
+        : `${names} 明天不营业 — 请改天再去。`,
+  },
+};
+
 export function notificationCopy(
   group: Pick<DateGroup, 'names' | 'reasons'>,
   isToday: boolean,
@@ -142,21 +192,11 @@ export function notificationCopy(
   const names = group.names.join(', ');
   const cleaningOnly = group.reasons.length === 1 && group.reasons[0] === 'cleaning';
   const why = REASON_WORDS[lang][cleaningOnly ? 'cleaning' : 'other_works'].phrase;
-
-  if (lang === 'zh') {
-    return {
-      title: isToday ? `🚫 今天关门（${why}）` : `⚠️ 明天关门（${why}）`,
-      body: isToday
-        ? `${names} 今天关闭${why} — 别白跑一趟！`
-        : `${names} 明天关闭${why} — 请改天再去。`,
-    };
-  }
+  const when = isToday ? 'today' : 'tomorrow';
 
   return {
-    title: isToday ? `🚫 Closed today ${why}` : `⚠️ Closed tomorrow ${why}`,
-    body: isToday
-      ? `${names} is closed — don't make the trip!`
-      : `${names} is closed tomorrow — plan another day.`,
+    title: NOTIFICATION_COPY[lang].title(when, why),
+    body: NOTIFICATION_COPY[lang].body(names, when),
   };
 }
 

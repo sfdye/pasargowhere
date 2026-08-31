@@ -9,10 +9,12 @@ import {
   notificationCopy,
   buildSchedule,
   MAX_SCHEDULED_REMINDERS,
+  LONG_CLOSURE_DAYS,
 } from './reminder-schedule.ts';
 import { MAX_FAVORITES } from './favorites.ts';
+import { REASON_WORDS } from './reason-words.ts';
 import type { DateGroup } from './reminder-schedule.ts';
-import type { Market } from './market-logic.ts';
+import type { Lang, Market, NotifiableReason } from './market-logic.ts';
 
 // 5-7 Feb 2026 is a Thursday-Saturday, so no Monday overlaps the cleaning window.
 function market(name: string, overrides?: Partial<Market>): Market {
@@ -177,6 +179,34 @@ describe('groupClosuresByDate', () => {
     ];
     assert.deepEqual(groupClosuresByDate(['A (Alpha)'], markets, today, 'en'), []);
   });
+
+  test('short closures (≤ threshold) expand to one group per day', () => {
+    const start = '25/1/2026';
+    const end = `${25 + LONG_CLOSURE_DAYS - 1}/1/2026`;
+    const markets = [market('A (Alpha)', { other_works_startdate: start, other_works_enddate: end })];
+    const groups = groupClosuresByDate(['A (Alpha)'], markets, today, 'en');
+    assert.equal(groups.length, LONG_CLOSURE_DAYS);
+  });
+
+  test('long closures (> threshold) notify only on the genuine first day', () => {
+    // 10-day other-works closure starting 25 Jan — previous day (24 Jan) is open.
+    const markets = [
+      market('A (Alpha)', { other_works_startdate: '25/1/2026', other_works_enddate: '3/2/2026' }),
+    ];
+    const groups = groupClosuresByDate(['A (Alpha)'], markets, today, 'en');
+    assert.equal(groups.length, 1);
+    assert.equal(civilKey(groups[0].date), '2026-1-25');
+  });
+
+  test('an in-progress long closure produces no groups', () => {
+    // 17-day closure starting 14 Jan — today is 15 Jan, so the scan starts on 16 Jan
+    // and the previous day (15 Jan) is already closed → not a genuine start.
+    const markets = [
+      market('A (Alpha)', { other_works_startdate: '14/1/2026', other_works_enddate: '30/1/2026' }),
+    ];
+    const groups = groupClosuresByDate(['A (Alpha)'], markets, today, 'en');
+    assert.deepEqual(groups, []);
+  });
 });
 
 describe('notificationCopy', () => {
@@ -189,34 +219,52 @@ describe('notificationCopy', () => {
     assert.equal(copy.body, 'Alpha, Beta is closed tomorrow — plan another day.');
   });
 
-  test('English, morning of', () => {
-    const copy = notificationCopy(group, true, 'en');
-    assert.equal(copy.title, '🚫 Closed today for cleaning');
-    assert.equal(copy.body, "Alpha, Beta is closed — don't make the trip!");
-  });
-
   test('Chinese, day before', () => {
     const copy = notificationCopy(group, false, 'zh');
-    assert.equal(copy.title, '⚠️ 明天关门（清洁）');
-    assert.equal(copy.body, 'Alpha, Beta 明天关闭清洁 — 请改天再去。');
-  });
-
-  test('Chinese, morning of', () => {
-    const copy = notificationCopy(group, true, 'zh');
-    assert.equal(copy.title, '🚫 今天关门（清洁）');
-    assert.equal(copy.body, 'Alpha, Beta 今天关闭清洁 — 别白跑一趟！');
+    assert.equal(copy.title, '⚠️ 明天不营业（清洁）');
+    assert.equal(copy.body, 'Alpha, Beta 明天不营业 — 请改天再去。');
   });
 
   test('says maintenance for other_works', () => {
     const works: CopyInput = { names: ['Alpha'], reasons: ['other_works'] };
     assert.equal(notificationCopy(works, true, 'en').title, '🚫 Closed today for maintenance');
-    assert.equal(notificationCopy(works, true, 'zh').title, '🚫 今天关门（维修）');
+    assert.equal(notificationCopy(works, true, 'zh').title, '🚫 今天不营业（维修）');
   });
 
   test('says maintenance when a date mixes both reasons', () => {
     const mixed: CopyInput = { names: ['Alpha', 'Beta'], reasons: ['cleaning', 'other_works'] };
     assert.equal(notificationCopy(mixed, false, 'en').title, '⚠️ Closed tomorrow for maintenance');
   });
+
+  // Parity: both languages must produce complete copy for every combination.
+  // Catches a reworded template that drops the reason phrase or the market names
+  // in one language while the other stays correct — the class of bug that produced
+  // "今天关闭清洁" when only the zh branch was edited.
+  const langs: Lang[] = ['en', 'zh'];
+  const timings = [false, true];
+  const reasonCombos: NotifiableReason[][] = [['cleaning'], ['other_works'], ['cleaning', 'other_works']];
+
+  for (const lang of langs) {
+    for (const isToday of timings) {
+      for (const reasons of reasonCombos) {
+        const label = `${lang}, ${isToday ? 'today' : 'tomorrow'}, [${reasons.join(', ')}]`;
+        test(`parity: ${label}`, () => {
+          const g: CopyInput = { names: ['Alpha', 'Beta'], reasons };
+          const copy = notificationCopy(g, isToday, lang);
+          const cleaningOnly = reasons.length === 1 && reasons[0] === 'cleaning';
+          const expectedPhrase = REASON_WORDS[lang][cleaningOnly ? 'cleaning' : 'other_works'].phrase;
+
+          assert.ok(copy.title.length > 0, `${label}: title empty`);
+          assert.ok(copy.body.length > 0, `${label}: body empty`);
+          assert.ok(
+            copy.title.includes(expectedPhrase),
+            `${label}: title missing reason phrase "${expectedPhrase}"`
+          );
+          assert.ok(copy.body.includes('Alpha, Beta'), `${label}: body missing market names`);
+        });
+      }
+    }
+  }
 });
 
 describe('buildSchedule', () => {
@@ -306,7 +354,7 @@ describe('buildSchedule', () => {
 
   test('respects the language setting', () => {
     const entries = buildSchedule(['A (Alpha)'], markets, 'zh', now);
-    assert.match(entries[0].title, /关门/);
+    assert.match(entries[0].title, /不营业/);
   });
 
   test('names the market in Chinese too, not just the copy around it', () => {
