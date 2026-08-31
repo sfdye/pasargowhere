@@ -1,0 +1,4 @@
+See pasar descriptions and refined closure info.
+
+• Pasar descriptions now show in detail and search results
+• Cleaner closure notices — consecutive closure days are grouped together

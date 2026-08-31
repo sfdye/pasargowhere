@@ -1,0 +1,4 @@
+Fixes and iPad screenshots.
+
+• Fix Discover sometimes showing wrong open/closed status
+• iPad screenshots now available on the App Store
