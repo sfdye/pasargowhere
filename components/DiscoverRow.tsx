@@ -4,14 +4,24 @@ import { useRouter } from 'expo-router';
 import { Image } from 'expo-image';
 import { Icon, Text } from './ui';
 import { parseMarketName } from '../lib/core/market-logic';
-import { resolveHoursDisplay, sgMinutes } from '../lib/core/market-hours';
+import { sgMinutes } from '../lib/core/market-hours';
+import { getDisplayStatus, type DisplayTone } from '../lib/core/display-status';
 import type { Market } from '../lib/core/market-logic';
+import { statusLabel } from '../lib/status';
 import type { Lang } from '../lib/i18n';
 import { formatDistance, getDisplayName, getMarketDistance } from '../lib/markets';
+import { useT, useToday } from '../lib/store';
 import type { Coords } from '../lib/useLocation';
 import { radius, space, useTheme } from '../lib/theme';
 
 const THUMB_SIZE = 56;
+
+const TEXT_TONE: Record<DisplayTone, 'accent' | 'danger' | 'warning'> = {
+  open: 'accent',
+  warning: 'warning',
+  closed: 'danger',
+  soon: 'warning',
+};
 
 function DiscoverRowInner({
   market,
@@ -24,29 +34,23 @@ function DiscoverRowInner({
 }) {
   const router = useRouter();
   const theme = useTheme();
+  const t = useT();
+  const today = useToday();
 
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
   const dist = getMarketDistance(market, coords?.lat ?? null, coords?.lng ?? null);
 
-  const hoursDisplay = resolveHoursDisplay(market.name, new Date().getDay(), sgMinutes());
-  const isOpen = hoursDisplay.kind === 'open' || hoursDisplay.kind === 'open24h';
-  const isSoon = hoursDisplay.kind === 'opensSoon' || hoursDisplay.kind === 'closesSoon';
-  const showStatus = hoursDisplay.kind !== 'noData';
-  const statusLabel = isSoon
-    ? lang === 'zh'
-      ? (hoursDisplay.kind === 'opensSoon' ? '即将开始营业' : '即将结束营业')
-      : (hoursDisplay.kind === 'opensSoon' ? 'Opens soon' : 'Closes soon')
-    : isOpen
-      ? lang === 'zh' ? '正在营业' : 'Open'
-      : lang === 'zh' ? '已结束营业' : 'Closed';
+  const { hours, tone } = getDisplayStatus(market, today, sgMinutes());
+  const showStatus = !(tone === 'open' && (!hours || hours.kind === 'noData'));
+  const label = statusLabel(tone, t, hours);
 
   return (
     <Pressable
       onPress={() => router.push({ pathname: '/market/[name]', params: { name: market.name } })}
       accessibilityRole="button"
       testID="discover-row"
-      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '']
+      accessibilityLabel={[displayName, dist !== null ? formatDistance(dist) : '', showStatus ? label : '']
         .filter(Boolean)
         .join('. ')}
       style={({ pressed }) => [
@@ -83,8 +87,8 @@ function DiscoverRowInner({
                 {dist !== null && (
                   <Text variant="subhead" tone="muted"> · </Text>
                 )}
-                <Text variant="subhead" tone={isSoon ? 'warning' : isOpen ? 'accent' : 'danger'}>
-                  {statusLabel}
+                <Text variant="subhead" tone={TEXT_TONE[tone]}>
+                  {label}
                 </Text>
               </>
             )}

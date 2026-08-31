@@ -6,11 +6,12 @@ import StatusPill from './StatusPill';
 // Pressable comes from the wrapper, not react-native — see its export.
 import SwipeToDeleteRow, { Pressable } from './SwipeToDeleteRow';
 import { Icon, Text } from './ui';
-import { getMarketStatus, parseMarketName } from '../lib/core/market-logic';
-import { resolveHoursDisplay, sgMinutes } from '../lib/core/market-hours';
+import { parseMarketName } from '../lib/core/market-logic';
+import { sgMinutes } from '../lib/core/market-hours';
+import { getDisplayStatus } from '../lib/core/display-status';
 import { formatDate } from '../lib/date';
 import { getDisplayName, getNextCleaningDate } from '../lib/markets';
-import { statusLabel, statusTone, type StatusTone } from '../lib/status';
+import { statusLabel } from '../lib/status';
 import { removeFavorite, useLang, useMarket, useT, useToday } from '../lib/store';
 import { COMPACT_FONT_SCALE, radius, space, useTheme } from '../lib/theme';
 
@@ -35,21 +36,9 @@ function MarketRowInner({ name }: { name: string }) {
 
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
-  const status = getMarketStatus(market, today);
-  const tone = statusTone(status);
+  const { hours: hoursDisplay, tone } = getDisplayStatus(market, today, sgMinutes());
 
-  const hoursDisplay =
-    status.status === 'open'
-      ? resolveHoursDisplay(market.name, today.getDay(), sgMinutes())
-      : null;
-
-  const effectiveTone: StatusTone =
-    hoursDisplay?.kind === 'closedByHours'
-      ? 'closed'
-      : hoursDisplay?.kind === 'opensSoon' || hoursDisplay?.kind === 'closesSoon'
-        ? 'soon'
-        : tone;
-  const label = statusLabel(effectiveTone, t, hoursDisplay);
+  const label = statusLabel(tone, t, hoursDisplay);
 
   const nextCleaning = getNextCleaningDate(market, today);
 
@@ -91,16 +80,16 @@ function MarketRowInner({ name }: { name: string }) {
             />
           )}
           <View style={styles.info}>
-            <Text variant={compact ? 'bodyStrong' : 'headline'}>{displayName}</Text>
+            <Text variant={compact ? 'bodyStrong' : 'headline'} numberOfLines={2}>{displayName}</Text>
             {!!subhead && (
-              <Text variant={compact ? 'footnote' : 'subhead'} tone="muted">
+              <Text variant={compact ? 'footnote' : 'subhead'} tone="muted" numberOfLines={2}>
                 {subhead}
               </Text>
             )}
           </View>
         </View>
         <View style={styles.trailing}>
-          <StatusPill tone={effectiveTone} label={label} compact={compact} style={styles.pill} />
+          <StatusPill tone={tone} label={label} compact={compact} style={styles.pill} />
           <Icon name="chevron" size={18} color="textFaint" />
         </View>
       </Pressable>
