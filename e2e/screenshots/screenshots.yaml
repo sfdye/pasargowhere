@@ -19,42 +19,6 @@ tags: [screenshots]
       id: discover-row
     timeout: 60000
 
-# --- Setup: add Tiong Bahru Market as a favourite ---
-- tapOn:
-    id: tab-mypasars
-- waitForAnimationToEnd
-- tapOn:
-    id: add-markets
-- waitForAnimationToEnd
-- tapOn: "Search.*"
-- inputText: Tiong Bahru
-- tapOn: "Tiong Bahru Market"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: "close"
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - pressKey: Back
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn:
-          id: done-button
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "Navigate up"
-      - waitForAnimationToEnd
-
 # Dismiss the reminder prompt card if present.
 - runFlow:
     when:
@@ -73,6 +37,12 @@ tags: [screenshots]
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Not now"
+    commands:
+      - tapOn: "Not now"
+      - waitForAnimationToEnd
 - takeScreenshot: 02-mypasars
 
 # Screenshot 3: Market detail.
