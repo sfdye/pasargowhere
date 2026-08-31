@@ -13,7 +13,7 @@ const LABELS = { open: 'openToday', warning: 'warningToday', closed: 'closedToda
 const TIME_LABELS = { open: 'openNow', closed: 'closedNow' } as const;
 
 /**
- * The label on a pill or banner: OPEN / CLOSED / MOST STALLS CLOSED.
+ * The label on a pill or banner: OPEN / CLOSED / REST DAY.
  * When hours data is available, OPEN 24H replaces OPEN for 24-hour markets.
  */
 export function statusLabel(

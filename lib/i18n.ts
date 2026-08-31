@@ -9,7 +9,7 @@ const en = {
   // Status labels: time-scoped when hours are available, day-scoped when not.
   openToday: 'OPEN',
   closedToday: 'CLOSED',
-  warningToday: 'MOST STALLS CLOSED',
+  warningToday: 'REST DAY',
   hoursNote: 'Operating hours from Google Maps — individual stall hours may vary.',
   hoursNoteNoData: 'Hours are set by each stall and are not in the NEA data — this covers whole-day closures only.',
   reasonMonday: 'Monday — most stalls rest',
@@ -124,7 +124,7 @@ const zh: Record<keyof typeof en, string> = {
   appTitle: '巴刹通',
   openToday: '正在营业',
   closedToday: '已结束营业',
-  warningToday: '多数摊位休息',
+  warningToday: '休息日',
   hoursNote: '营业时间来自 Google 地图 — 各摊位营业时间可能不同。',
   hoursNoteNoData: '各摊位的营业时间由摊主自定，国家环境局的数据中没有 — 这里只显示全天不营业的日期。',
   reasonMonday: '星期一 — 多数摊位休息',

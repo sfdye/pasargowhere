@@ -6,12 +6,12 @@ import StallCounts, { hasStallCounts } from '../../components/StallCounts';
 import StatusBanner from '../../components/StatusBanner';
 import UpcomingClosures from '../../components/UpcomingClosures';
 import { Card, EmptyState, Icon, Text } from '../../components/ui';
-import { getMarketStatus, getNextOpenDate, parseMarketName } from '../../lib/core/market-logic';
-import { resolveHoursDisplay, sgMinutes, getTodayHoursLabel, getMarketHours } from '../../lib/core/market-hours';
+import { getNextOpenDate, parseMarketName } from '../../lib/core/market-logic';
+import { sgMinutes, getTodayHoursLabel, getMarketHours } from '../../lib/core/market-hours';
+import { getDisplayStatus } from '../../lib/core/display-status';
 import { famousBlurb, isFamous } from '../../lib/core/famous';
 import { openInMaps } from '../../lib/maps';
 import { decodeEntities, getDisplayName, marketCoords } from '../../lib/markets';
-import { statusTone } from '../../lib/status';
 import {
   toggleFavorite,
   useIsFavorite,
@@ -21,6 +21,7 @@ import {
   useT,
   useToday,
 } from '../../lib/store';
+
 import { radius, space, useTheme } from '../../lib/theme';
 
 const DESC_COLLAPSE_LINES = 3;
@@ -49,16 +50,8 @@ export default function MarketDetailScreen() {
 
   const parsed = parseMarketName(market.name);
   const displayName = getDisplayName(parsed, lang);
-  const status = getMarketStatus(market, today);
-  const tone = statusTone(status);
-  const hoursDisplay =
-    status.status === 'open'
-      ? resolveHoursDisplay(market.name, today.getDay(), sgMinutes())
-      : null;
-  const effectiveTone = hoursDisplay?.kind === 'closedByHours' || hoursDisplay?.kind === 'opensSoon'
-    ? 'closed'
-    : tone;
-  const nextOpen = effectiveTone === 'closed' ? getNextOpenDate(market, today) : null;
+  const { status, hours: hoursDisplay, tone } = getDisplayStatus(market, today, sgMinutes());
+  const nextOpen = tone === 'closed' ? getNextOpenDate(market, today) : null;
   const todayHoursLabel = getTodayHoursLabel(getMarketHours(market.name) ?? {}, today.getDay());
   const address = market.address_myenv ? decodeEntities(market.address_myenv) : '';
   const description = market.description_myenv ? decodeEntities(market.description_myenv) : '';
@@ -111,9 +104,9 @@ export default function MarketDetailScreen() {
           </View>
         )}
 
-        <StatusBanner status={status} nextOpen={nextOpen} hoursDisplay={hoursDisplay} marketName={market.name} />
+        <StatusBanner status={status} tone={tone} nextOpen={nextOpen} hoursDisplay={hoursDisplay} marketName={market.name} />
 
-        {tone !== 'closed' && (
+        {status.status !== 'closed' && (
           <Text variant="footnote" tone="faint" style={styles.hoursNote}>
             {todayHoursLabel
               ? t('hoursNote')
