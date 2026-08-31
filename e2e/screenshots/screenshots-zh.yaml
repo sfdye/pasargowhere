@@ -2,7 +2,7 @@ appId: ${APP_ID}
 tags: [screenshots-zh]
 ---
 # Screenshot capture flow for Chinese (zh-Hans) locale.
-# Switches to Chinese first, then adds a favourite, captures all screens.
+# Favourites and date are pre-set via deep link in launch.yaml.
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.

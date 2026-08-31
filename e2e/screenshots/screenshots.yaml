@@ -7,10 +7,8 @@ tags: [screenshots]
 # Usage:
 #   1. Build: APP_VARIANT=development npx expo run:ios --configuration Release
 #   2. npm run screenshots:ios  (or screenshots:android)
-#
-# Screenshots save to Maestro's default output dir (.maestro/tests/...).
-# Copy them into fastlane/screenshots/<locale>/ and
-# fastlane/metadata/android/<locale>/images/phoneScreenshots/ after capture.
+#   3. npm run screenshots:copy
+#   4. npm run metadata:ios
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.

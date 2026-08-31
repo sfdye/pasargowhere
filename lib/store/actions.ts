@@ -146,6 +146,7 @@ async function revalidateIfStale(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 let midnightTimer: ReturnType<typeof setTimeout> | undefined;
+let screenshotDateOverride: string | null = null;
 
 /**
  * Advance `today` at Singapore midnight, not just on foreground: a phone left on the Today
@@ -153,11 +154,11 @@ let midnightTimer: ReturnType<typeof setTimeout> | undefined;
  */
 function armMidnightTimer(): void {
   clearTimeout(midnightTimer);
-  const today = sgToday();
+  const today = screenshotDateOverride ? parseDateDMY(screenshotDateOverride) ?? sgToday() : sgToday();
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   const delay = Math.max(1000, sgInstant(tomorrow, 0).getTime() - Date.now());
   midnightTimer = setTimeout(() => {
-    setState({ today: sgToday() });
+    if (!screenshotDateOverride) setState({ today: sgToday() });
     armMidnightTimer();
   }, delay);
 }
@@ -204,6 +205,10 @@ export function initStore(): void {
 
   AppState.addEventListener('change', (next: AppStateStatus) => {
     if (next !== 'active') return;
+    if (screenshotDateOverride) {
+      void storage.clearScreenshotDate();
+      screenshotDateOverride = null;
+    }
     // Re-passing the preference re-resolves it: following the device means following it when the
     // user changes it, not only at first launch. Android recreates the activity on a locale
     // change but the JS context can survive it.
@@ -238,6 +243,7 @@ export function initStore(): void {
     ]);
 
     const today = screenshotDate ? parseDateDMY(screenshotDate) ?? sgToday() : sgToday();
+    screenshotDateOverride = screenshotDate;
 
     setState({
       langPref,
