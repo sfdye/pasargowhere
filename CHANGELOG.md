@@ -31,12 +31,16 @@
 
 - Adopt the new awning mark as the app icon (#64)
 
-## v1.0.0+2 — 2026-08-25
+## v1.0.0+2 — 2026-08-27
 
 ### Improved
 
 - Surface NEA description in market detail and search (#55)
 - Refine Monday closure presentation and coalesce closure ranges (#54)
+
+### Fixed
+
+- Fix EAS build archive bloat from .easignore overriding .gitignore (#56)
 
 ## v1.0.0+1 — 2026-08-24
 
@@ -71,7 +75,6 @@
 
 - Fix e2e settings flow and iOS favorites swipe (#51)
 - Fix locate button zooming to stale location instead of the blue dot (#42)
-- Fix EAS build archive bloat from .easignore overriding .gitignore (#56)
 - Keep Today row chevrons within their layout bounds (#34)
 - Fix back button label leaking "(tabs)"
 - Stop claiming a market is open right now
