@@ -4,6 +4,7 @@ import { MAX_FAVORITES, toggledFavorites } from '../core/favorites';
 import type { MapProvider } from '../core/map-provider';
 import type { MapView } from '../core/map-view';
 import { sgInstant, sgToday } from '../core/reminder-schedule';
+import { parseDateDMY } from '../core/market-logic';
 import type { ThemePref } from '../core/theme-pref';
 import type { LangPref } from '../lang';
 import { fetchMarketsFromAPI, findMarket } from '../markets';
@@ -145,6 +146,7 @@ async function revalidateIfStale(): Promise<void> {
 // ---------------------------------------------------------------------------
 
 let midnightTimer: ReturnType<typeof setTimeout> | undefined;
+let screenshotDateOverride: string | null = null;
 
 /**
  * Advance `today` at Singapore midnight, not just on foreground: a phone left on the Today
@@ -152,11 +154,11 @@ let midnightTimer: ReturnType<typeof setTimeout> | undefined;
  */
 function armMidnightTimer(): void {
   clearTimeout(midnightTimer);
-  const today = sgToday();
+  const today = screenshotDateOverride ? parseDateDMY(screenshotDateOverride) ?? sgToday() : sgToday();
   const tomorrow = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
   const delay = Math.max(1000, sgInstant(tomorrow, 0).getTime() - Date.now());
   midnightTimer = setTimeout(() => {
-    setState({ today: sgToday() });
+    if (!screenshotDateOverride) setState({ today: sgToday() });
     armMidnightTimer();
   }, delay);
 }
@@ -203,6 +205,10 @@ export function initStore(): void {
 
   AppState.addEventListener('change', (next: AppStateStatus) => {
     if (next !== 'active') return;
+    if (screenshotDateOverride) {
+      void storage.clearScreenshotDate();
+      screenshotDateOverride = null;
+    }
     // Re-passing the preference re-resolves it: following the device means following it when the
     // user changes it, not only at first launch. Android recreates the activity on a locale
     // change but the JS context can survive it.
@@ -222,6 +228,7 @@ export function initStore(): void {
       cardDismissed,
       mapView,
       themePref,
+      screenshotDate,
     ] = await Promise.all([
       storage.loadLangPref(),
       storage.loadMapProvider(),
@@ -232,7 +239,11 @@ export function initStore(): void {
       storage.loadReminderCardDismissed(),
       storage.loadMapView(),
       storage.loadThemePref(),
+      storage.loadScreenshotDate(),
     ]);
+
+    const today = screenshotDate ? parseDateDMY(screenshotDate) ?? sgToday() : sgToday();
+    screenshotDateOverride = screenshotDate;
 
     setState({
       langPref,
@@ -241,7 +252,7 @@ export function initStore(): void {
       remindersEnabled,
       reminderCardDismissed: cardDismissed,
       fetchedAt,
-      today: sgToday(),
+      today,
       mapView,
       themePref,
       ...(cached ? { markets: cached } : {}),

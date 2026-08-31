@@ -2,7 +2,7 @@ appId: ${APP_ID}
 tags: [screenshots-zh]
 ---
 # Screenshot capture flow for Chinese (zh-Hans) locale.
-# Switches to Chinese first, then adds a favourite, captures all screens.
+# Favourites and date are pre-set via deep link in launch.yaml.
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.
@@ -22,42 +22,6 @@ tags: [screenshots-zh]
     id: lang-zh
 - waitForAnimationToEnd
 
-# --- Add Tiong Bahru Market as a favourite (in Chinese) ---
-- tapOn:
-    id: tab-mypasars
-- waitForAnimationToEnd
-- tapOn:
-    id: add-markets
-- waitForAnimationToEnd
-- tapOn: "搜索.*"
-- inputText: 中峇鲁
-- tapOn: "中峇鲁巴刹.*"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: "close"
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - pressKey: Back
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn:
-          id: done-button
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "向上导航"
-      - waitForAnimationToEnd
-
 # Dismiss the reminder prompt card if present.
 - runFlow:
     when:
@@ -76,6 +40,12 @@ tags: [screenshots-zh]
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "以后再说"
+    commands:
+      - tapOn: "以后再说"
+      - waitForAnimationToEnd
 - takeScreenshot: 02-mypasars
 
 # Screenshot 3: Market detail in Chinese.

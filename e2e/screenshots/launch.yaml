@@ -1,7 +1,16 @@
 appId: ${APP_ID}
 ---
-# Screenshot-only launch: grants all permissions and sets the simulated
-# location to Singapore city centre so Discover shows the "Near you" rail.
+# Screenshot-only launch: grants all permissions, sets the simulated location to
+# Singapore city centre so Discover shows the "Near you" rail, and overrides the
+# app's "today" date so screenshots show diverse market statuses (open + closed).
+#
+# The date override uses a deep link to a hidden route that writes to AsyncStorage,
+# then the app is killed and relaunched with clearState: false so the date persists
+# but favourites are empty (cleared by the first launch's clearState: true).
+#
+# Date: 25/3/2026 (Wednesday) — Geylang Serai Market is closed for Q1 cleaning
+# (23-25 Mar), Tiong Bahru and Maxwell are open.
+
 - setLocation:
     latitude: 1.2834
     longitude: 103.8607
@@ -9,8 +18,6 @@ appId: ${APP_ID}
     clearState: true
     permissions: { all: allow }
 - waitForAnimationToEnd
-# `expo run:ios` finishes by opening a dev-client deep link, which leaves a system
-# "Open in <app>?" sheet on screen; accept it so the app can foreground.
 - runFlow:
     when:
       visible: "Open in"
@@ -23,3 +30,28 @@ appId: ${APP_ID}
     commands:
       - tapOn: "Allow While Using App"
       - waitForAnimationToEnd
+
+# Set the screenshot date and favourites via deep link, then relaunch so they take effect.
+# Favourites are pipe-separated NEA market names (URL-encoded).
+# Date: 25/3/2026 (Wednesday) — Geylang Serai Market is closed for Q1 cleaning
+# (23-25 Mar), Tiong Bahru and Maxwell are open.
+- openLink: "pasargurudev:///screenshot-setup?date=25%2F3%2F2026&favorites=Tiong+Bahru+Market%7CMaxwell+Food+Centre+%28Kim+Hua+Market%29%7CGeylang+Serai+Market"
+- waitForAnimationToEnd
+- retry:
+    maxRetries: 5
+    commands:
+      - runFlow:
+          when:
+            visible: "Cancel"
+          commands:
+            - tapOn: "Open"
+            - waitForAnimationToEnd
+- extendedWaitUntil:
+    visible:
+      text: "Screenshot date set.*"
+    timeout: 15000
+- waitForAnimationToEnd
+- killApp
+- launchApp:
+    clearState: false
+- waitForAnimationToEnd

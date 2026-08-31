@@ -7,10 +7,8 @@ tags: [screenshots]
 # Usage:
 #   1. Build: APP_VARIANT=development npx expo run:ios --configuration Release
 #   2. npm run screenshots:ios  (or screenshots:android)
-#
-# Screenshots save to Maestro's default output dir (.maestro/tests/...).
-# Copy them into fastlane/screenshots/<locale>/ and
-# fastlane/metadata/android/<locale>/images/phoneScreenshots/ after capture.
+#   3. npm run screenshots:copy
+#   4. npm run metadata:ios
 
 - runFlow: ./launch.yaml
 # App starts on Discover — wait for it to hydrate.
@@ -18,42 +16,6 @@ tags: [screenshots]
     visible:
       id: discover-row
     timeout: 60000
-
-# --- Setup: add Tiong Bahru Market as a favourite ---
-- tapOn:
-    id: tab-mypasars
-- waitForAnimationToEnd
-- tapOn:
-    id: add-markets
-- waitForAnimationToEnd
-- tapOn: "Search.*"
-- inputText: Tiong Bahru
-- tapOn: "Tiong Bahru Market"
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn: "close"
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - pressKey: Back
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: iOS
-    commands:
-      - tapOn:
-          id: done-button
-      - waitForAnimationToEnd
-- runFlow:
-    when:
-      platform: Android
-    commands:
-      - tapOn: "Navigate up"
-      - waitForAnimationToEnd
 
 # Dismiss the reminder prompt card if present.
 - runFlow:
@@ -73,6 +35,12 @@ tags: [screenshots]
 - tapOn:
     id: tab-mypasars
 - waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Not now"
+    commands:
+      - tapOn: "Not now"
+      - waitForAnimationToEnd
 - takeScreenshot: 02-mypasars
 
 # Screenshot 3: Market detail.

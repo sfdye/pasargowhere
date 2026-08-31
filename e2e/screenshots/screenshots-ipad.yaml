@@ -1,0 +1,61 @@
+appId: ${APP_ID}
+tags: [screenshots-ipad]
+---
+# iPad screenshot capture flow — run against a standalone dev build on an iPad simulator.
+# Produces 5 screenshots per locale for the 13-inch iPad section on App Store Connect.
+#
+# Usage:
+#   1. Boot an iPad Pro 13-inch (M4) simulator
+#   2. Build: APP_VARIANT=development npx expo run:ios --configuration Release --device "iPad Pro 13-inch (M4)"
+#   3. npm run screenshots:ios:ipad
+#
+# Screenshots save to Maestro's default output dir (.maestro/tests/...).
+# Copy them into fastlane/screenshots/<locale>/ with the ipad- prefix preserved.
+
+- runFlow: ./launch.yaml
+- extendedWaitUntil:
+    visible:
+      id: discover-row
+    timeout: 60000
+
+- runFlow:
+    when:
+      visible: "Not now"
+    commands:
+      - tapOn: "Not now"
+      - waitForAnimationToEnd
+
+- tapOn:
+    id: tab-discover
+- waitForAnimationToEnd
+- takeScreenshot: ipad-01-discover
+
+- tapOn:
+    id: tab-mypasars
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "Not now"
+    commands:
+      - tapOn: "Not now"
+      - waitForAnimationToEnd
+- takeScreenshot: ipad-02-mypasars
+
+- tapOn:
+    id: market-row
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: ipad-03-market-detail
+- tapOn:
+    id: BackButton
+- waitForAnimationToEnd
+
+- tapOn:
+    id: tab-map
+- waitForAnimationToEnd
+- takeScreenshot: ipad-04-map
+
+- tapOn:
+    id: tab-settings
+- waitForAnimationToEnd
+- takeScreenshot: ipad-05-settings

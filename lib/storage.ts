@@ -18,6 +18,7 @@ const KEYS = {
   reminders: 'oa_reminders_enabled',
   reminderCardDismissed: 'oa_reminder_card_dismissed',
   theme: 'oa_theme',
+  screenshotDate: 'oa_screenshot_date',
 } as const;
 
 // Region events can arrive close together; queue writes so an older view can never finish after a
@@ -134,4 +135,16 @@ export async function loadThemePref(): Promise<ThemePref> {
 export async function saveThemePref(pref: ThemePref): Promise<void> {
   if (pref === 'system') await AsyncStorage.removeItem(KEYS.theme);
   else await AsyncStorage.setItem(KEYS.theme, pref);
+}
+
+export async function loadScreenshotDate(): Promise<string | null> {
+  return AsyncStorage.getItem(KEYS.screenshotDate);
+}
+
+export async function saveScreenshotDate(date: string): Promise<void> {
+  await AsyncStorage.setItem(KEYS.screenshotDate, date);
+}
+
+export async function clearScreenshotDate(): Promise<void> {
+  await AsyncStorage.removeItem(KEYS.screenshotDate);
 }

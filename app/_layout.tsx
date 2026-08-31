@@ -43,6 +43,7 @@ export default function RootLayout() {
                 callout and the Today list can all reach them the same way. */}
             <Stack.Screen name="market/[name]" options={{ title: '' }} />
             <Stack.Screen name="add" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="screenshot-setup" options={{ headerShown: false }} />
             <Stack.Screen name="+not-found" options={{ title: t('notFound') }} />
           </Stack>
         </ThemeProvider>
