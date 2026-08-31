@@ -1,10 +1,48 @@
 # Changelog
 
+## v1.0.0+5 — 2026-08-31
+
+### Fixed
+
+- Fix Chinese notification copy and collapse long-closure reminders (#69)
+
+## v1.0.0+4 — 2026-08-31
+
+### Improved
+
+- iPad screenshot support and auto-resize for ASC upload (#65)
+
+### Fixed
+
+- Fix Discover status ignoring NEA closures; extract getDisplayStatus helper (#68)
+
+### Internal
+
+- Rename AsyncStorage keys from oa_ to pg_ prefix (#66)
+- Add .worktrees/ to .gitignore to exclude from EAS build archive (#67)
+
+## v1.0.0+3 — 2026-08-29
+
+### New
+
+- Add operating hours from Google Maps (#62)
+
+### Improved
+
+- Adopt the new awning mark as the app icon (#64)
+
+## v1.0.0+2 — 2026-08-25
+
+### Improved
+
+- Surface NEA description in market detail and search (#55)
+- Refine Monday closure presentation and coalesce closure ranges (#54)
+
 ## v1.0.0+1 — 2026-08-24
 
 ### New
 
-- Rebrand to PasarGoWhere with discovery-first information architecture (#52)
+- Rebrand to PasarGuru with discovery-first information architecture (#52)
 - Fastlane store metadata scaffold for App Store and Google Play (#47)
 - Privacy policy page for App Store submission (#43)
 - OneMap logo and Singapore Open Data Licence attribution (#46)
@@ -38,10 +76,3 @@
 - Fix back button label leaking "(tabs)"
 - Stop claiming a market is open right now
 - Open the right market when a reminder is tapped
-
-## v1.0.0+2 — 2026-08-25
-
-### Improved
-
-- Surface NEA description in market detail and search (#55)
-- Refine Monday closure presentation and coalesce closure ranges (#54)

@@ -3,3 +3,5 @@ Discover Singapore's hawker centres and wet markets — find one near you, check
 • Browse pasars near you and filter by wet market or food centre
 • Open/closed status and upcoming closures with reopening dates
 • Save your favourites and get reminders before they close
+• Operating hours from Google Maps
+• Fix closure status and reminder accuracy
