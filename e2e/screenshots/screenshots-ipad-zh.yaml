@@ -1,0 +1,63 @@
+appId: ${APP_ID}
+tags: [screenshots-ipad-zh]
+---
+# iPad screenshot capture flow for Chinese (zh-Hans) locale.
+# Switches to Chinese first, then adds a favourite, captures all screens.
+
+- runFlow: ./launch.yaml
+- extendedWaitUntil:
+    visible:
+      id: discover-row
+    timeout: 60000
+
+- tapOn:
+    id: tab-settings
+- waitForAnimationToEnd
+- tapOn:
+    id: row-language
+- waitForAnimationToEnd
+- tapOn:
+    id: lang-zh
+- waitForAnimationToEnd
+
+- runFlow:
+    when:
+      visible: "以后再说"
+    commands:
+      - tapOn: "以后再说"
+      - waitForAnimationToEnd
+
+- tapOn:
+    id: tab-discover
+- waitForAnimationToEnd
+- takeScreenshot: ipad-01-discover
+
+- tapOn:
+    id: tab-mypasars
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: "以后再说"
+    commands:
+      - tapOn: "以后再说"
+      - waitForAnimationToEnd
+- takeScreenshot: ipad-02-mypasars
+
+- tapOn:
+    id: market-row
+    index: 0
+- waitForAnimationToEnd
+- takeScreenshot: ipad-03-market-detail
+- tapOn:
+    id: BackButton
+- waitForAnimationToEnd
+
+- tapOn:
+    id: tab-map
+- waitForAnimationToEnd
+- takeScreenshot: ipad-04-map
+
+- tapOn:
+    id: tab-settings
+- waitForAnimationToEnd
+- takeScreenshot: ipad-05-settings
