@@ -15,6 +15,7 @@ We tested the submitted build on these physical devices through TestFlight:
 - iPhone 16 Plus, iOS 26.6.1
 - iPhone 15, iOS 26.6
 - iPhone 14, iOS 18.7.8
+- iPad (A16), iPadOS 26.6.1
 
 SETUP AND ACCESS
 No account, login, credentials, authentication code, or sample file is required. Install and launch the app, then tap the location action if distance sorting is desired. Tap a market row to view its closure schedule and tap the star to follow it. The My Pasars tab contains the reminder control. The app works with the bundled/cached dataset if the network is unavailable.
