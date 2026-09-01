@@ -21,7 +21,7 @@ export default function DiscoverScreen() {
   const ready = useReady();
   const markets = useMarkets();
   const stale = useStale();
-  const { coords, status } = useLocation();
+  const { coords, status, request } = useLocation();
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [filter, setFilter] = useState<Filter>('all');
@@ -170,12 +170,15 @@ export default function DiscoverScreen() {
               </View>
             )}
 
-            {status === 'denied' && !deferredQuery && (
+            {(status === 'idle' || status === 'denied') && !deferredQuery && (
               <Row
                 label={t('enableLocation')}
                 icon="locate"
                 chevron
-                onPress={() => void Linking.openSettings()}
+                testID="enable-location"
+                onPress={() =>
+                  status === 'denied' ? void Linking.openSettings() : void request()
+                }
                 last
               />
             )}

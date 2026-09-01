@@ -19,7 +19,7 @@ export default function AddMarketsScreen() {
   const lang = useLang();
   const markets = useMarkets();
   const favorites = useFavorites();
-  const { coords, status } = useLocation();
+  const { coords, status, request } = useLocation();
   const [query, setQuery] = useState('');
   // The search bar stays at the finger's speed; the 123-row list catches up.
   const deferredQuery = useDeferredValue(query);
@@ -102,12 +102,15 @@ export default function AddMarketsScreen() {
               value={sort}
               onChange={setChosenSort}
             />
-            {status === 'denied' && (
+            {(status === 'idle' || status === 'denied') && (
               <Row
                 label={t('enableLocation')}
                 icon="locate"
                 chevron
-                onPress={() => void Linking.openSettings()}
+                testID="enable-location"
+                onPress={() =>
+                  status === 'denied' ? void Linking.openSettings() : void request()
+                }
                 last
               />
             )}

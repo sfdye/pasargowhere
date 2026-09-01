@@ -68,7 +68,21 @@ export function useLocation(): {
   const current = useSyncExternalStore(subscribe, () => snapshot);
 
   useEffect(() => {
-    if (snapshot.status === 'idle') void acquire();
+    if (snapshot.status !== 'idle') return;
+
+    let cancelled = false;
+    void Location.getForegroundPermissionsAsync()
+      .then(({ granted }) => {
+        // Avoid interrupting first launch. Existing grants can still restore the location sort.
+        if (granted && !cancelled && snapshot.status === 'idle') void acquire();
+      })
+      .catch(() => {
+        // Leave the action row available when the permission state cannot be read.
+      });
+
+    return () => {
+      cancelled = true;
+    };
   }, []);
 
   return { ...current, request: (options) => acquire(options) };

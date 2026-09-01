@@ -1,3 +1,7 @@
-# App review contact information is set manually in App Store Connect.
+# App review contact details are set manually in App Store Connect; notes are versioned below.
 primary_category "LIFESTYLE"
 secondary_category "FOOD_AND_DRINK"
+
+app_review_information(
+  notes: File.read(File.join(__dir__, "review-notes.md")),
+)
