@@ -21,7 +21,7 @@ export default function AddMarketsScreen() {
   const favorites = useFavorites();
   const { coords, status, request } = useLocation();
   const [query, setQuery] = useState('');
-  // The search bar stays at the finger's speed; the 123-row list catches up.
+  // The search bar stays at the finger's speed; the market list catches up.
   const deferredQuery = useDeferredValue(query);
   const [chosenSort, setChosenSort] = useState<Sort | null>(null);
 

@@ -74,7 +74,7 @@ export function useFetchedAt(): number | null {
 
 /**
  * The reason the store exists. A row subscribing to its own boolean re-renders on its own star
- * tap; subscribing to the favourites array would re-render all 123 rows of the picker.
+  * tap; subscribing to the favourites array would re-render every row of the picker.
  */
 export function useIsFavorite(name: string): boolean {
   return useSelector((s) => s.favorites.includes(name));

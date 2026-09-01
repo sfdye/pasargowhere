@@ -9,7 +9,7 @@ import { HIT_SIZE, space, useTheme } from '../lib/theme';
 
 /**
  * One row of the add-markets list. Memoized and subscribed to its own favourite flag, so tapping
- * a star re-renders one row out of 123 rather than the whole list.
+ * a star re-renders one row rather than the whole list.
  */
 function PickerRowInner({
   market,
