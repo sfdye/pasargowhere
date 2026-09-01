@@ -4,9 +4,9 @@ PURPOSE AND AUDIENCE
 PasarGuru is a free utility for Singapore residents, especially seniors, who want to check whether a hawker centre or wet market is open before travelling there. It covers publicly listed locations managed by Singapore's National Environment Agency (NEA), shows open/closed status and upcoming closures, and provides optional local reminders. It solves the problem that the public NEA closure schedule is difficult to check quickly.
 
 REVIEW FLOW AND SCREEN RECORDING
-The physical-device screen recording attached to the App Store Connect reply starts by launching the app and demonstrates the typical flow: browse Discover, tap "Enable location to sort by distance" and allow location, open a market detail page, save a market, open My Pasars, enable closure reminders and allow notifications, open the Map, and visit Settings to show the language option.
+The physical-device screen recording attached to the App Store Connect reply starts by launching the app and demonstrates the typical flow: complete the foreground location permission step during the initial Discover flow, browse Discover, open a market detail page, save a market, open My Pasars, enable closure reminders and allow notifications, open the Map, and visit Settings to show the language option.
 
-The app has no account registration, login, account deletion, paid content, subscriptions, in-app purchases, user-generated content, messaging, reporting, blocking, or sample files. The only permission prompts are foreground location, requested after the user taps the location action, and local notifications, requested after the user enables reminders. Both prompts are demonstrated in the recording.
+The app has no account registration, login, account deletion, paid content, subscriptions, in-app purchases, user-generated content, messaging, reporting, blocking, or sample files. The only permission prompts are foreground location during the initial Discover flow and local notifications after the user enables reminders. Both prompts are demonstrated in the recording.
 
 TEST DEVICES
 We tested the submitted build on these physical devices through TestFlight:
