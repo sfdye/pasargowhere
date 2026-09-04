@@ -81,7 +81,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "PasarGuru uses your location to sort nearby hawker centres and wet markets by distance and centre the map on your area. Your location is processed only on your device and is never uploaded.",
+          "locationWhenInUsePermission": "PasarGuru uses your location to sort nearby hawker centres and wet markets by distance. Your location is processed only on your device and is never uploaded.",
           "isAndroidBackgroundLocationEnabled": false,
           "isIosBackgroundLocationEnabled": false
         }
