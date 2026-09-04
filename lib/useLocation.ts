@@ -14,7 +14,11 @@ export type LocationStatus = 'idle' | 'requesting' | 'granted' | 'denied';
 
 // The fix lives in a module, not in a component: the map tab and the add modal both want it,
 // and mounting either one again must not re-prompt or re-locate.
-let snapshot: { coords: Coords | null; status: LocationStatus } = { coords: null, status: 'idle' };
+let snapshot: { coords: Coords | null; status: LocationStatus; probed: boolean } = {
+  coords: null,
+  status: 'idle',
+  probed: false,
+};
 let inflight: Promise<void> | null = null;
 const listeners = new Set<() => void>();
 
@@ -63,6 +67,8 @@ function acquire(options?: { fresh?: boolean }): Promise<void> {
 export function useLocation(): {
   coords: Coords | null;
   status: LocationStatus;
+  /** True once the mount probe has settled — the permission prompt waits for it to avoid flicker. */
+  probed: boolean;
   request: (options?: { fresh?: boolean }) => Promise<void>;
 } {
   const current = useSyncExternalStore(subscribe, () => snapshot);
@@ -76,12 +82,17 @@ export function useLocation(): {
         // Avoid interrupting first launch. Existing grants can still restore the location sort.
         if (granted && !cancelled && snapshot.status === 'idle') void acquire();
         // A hard denial (blocked in Settings) never shows a dialog, so the first tap would
-        // otherwise do nothing — surface it now so the row opens Settings straight away.
+        // otherwise do nothing — surface it now so the prompt routes to Settings straight away.
         else if (!granted && !canAskAgain && !cancelled && snapshot.status === 'idle')
           set({ status: 'denied' });
       })
       .catch(() => {
-        // Leave the action row available when the permission state cannot be read.
+        // Leave the action prompt available when the permission state cannot be read.
+      })
+      .finally(() => {
+        // The permission prompt may render only once the probe has settled, so an existing
+        // grant never flashes it for a frame on launch.
+        if (!cancelled) set({ probed: true });
       });
 
     return () => {
