@@ -81,7 +81,7 @@
       [
         "expo-location",
         {
-          "locationWhenInUsePermission": "Used only to find pasars near you. Your location never leaves your device.",
+          "locationWhenInUsePermission": "PasarGuru uses your location to sort nearby hawker centres and wet markets by distance. Your location is processed only on your device and is never uploaded.",
           "isAndroidBackgroundLocationEnabled": false,
           "isIosBackgroundLocationEnabled": false
         }

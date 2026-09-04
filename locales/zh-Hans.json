@@ -1,4 +1,7 @@
 {
-  "ios": { "CFBundleDisplayName": "巴刹通" },
+  "ios": {
+    "CFBundleDisplayName": "巴刹通",
+    "NSLocationWhenInUseUsageDescription": "巴刹通使用您的位置按距离排列附近的小贩中心和湿巴刹。您的位置只会在设备上处理，不会上传。"
+  },
   "android": { "app_name": "巴刹通" }
 }

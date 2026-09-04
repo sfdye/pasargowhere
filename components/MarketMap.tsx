@@ -71,14 +71,14 @@ export default function MarketMap({ markets }: { markets: Market[] }) {
   const [selected, setSelected] = useState<Market | null>(null);
 
   // Read once at mount, not subscribed: a re-render on every save (i.e. every region settle) would
-  // re-serialise the tile style and all ~123 features, the cost ConstrainedCamera's state placement
+  // re-serialise the tile style and all market features, the cost ConstrainedCamera's state placement
   // exists to avoid. The store is hydrated before the map tab can be reached, so this is current.
   const [savedView] = useState<MapView | null>(() => getState().mapView);
   const latestView = useRef<MapView | null>(savedView);
   const pendingUserView = useRef<MapView | null>(null);
   const saveTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 
-  // Circles are drawn by the GPU from one source, so all ~123 markets stay cheap. Native view
+  // Circles are drawn by the GPU from one source, so all markets stay cheap. Native view
   // annotations would not.
   const collection = useMemo<GeoJSON.FeatureCollection<GeoJSON.Point>>(() => {
     const features: GeoJSON.Feature<GeoJSON.Point>[] = [];

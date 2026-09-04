@@ -3,8 +3,9 @@ appId: ${APP_ID}
 - launchApp:
     clearState: true
     permissions: { all: deny }
-# The app requests location on launch. With clearState + permissions denied,
-# the system dialog may or may not appear depending on prior state.
+# Location is requested only after the in-app "Enable location" action. With
+# clearState + permissions denied, the system dialog should not appear here.
+# Keep the conditional dismissal as a guard for platform permission-state quirks.
 # Conditionally dismiss it if present. The apostrophe in "Don't Allow" is a
 # Unicode right single quote (U+2019), so match by regex.
 - runFlow:

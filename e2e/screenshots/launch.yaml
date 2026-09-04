@@ -23,6 +23,13 @@ appId: ${APP_ID}
       visible: "Open in"
     commands:
       - tapOn: "Open"
+- waitForAnimationToEnd
+- runFlow:
+    when:
+      visible: { id: enable-location }
+    commands:
+      - tapOn:
+          id: enable-location
       - waitForAnimationToEnd
 - runFlow:
     when:

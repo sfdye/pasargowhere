@@ -1,7 +1,8 @@
 import { useDeferredValue, useMemo, useState } from 'react';
-import { FlatList, Linking, Pressable, StyleSheet, View } from 'react-native';
+import { FlatList, Pressable, StyleSheet, View } from 'react-native';
 import { Stack, useRouter } from 'expo-router';
 import PickerRow from '../components/PickerRow';
+import LocationPrompt from '../components/LocationPrompt';
 import { EmptyState, Row, Segmented, Text } from '../components/ui';
 import { MAX_FAVORITES } from '../lib/core/favorites';
 import { parseMarketName, type Market } from '../lib/core/market-logic';
@@ -19,9 +20,9 @@ export default function AddMarketsScreen() {
   const lang = useLang();
   const markets = useMarkets();
   const favorites = useFavorites();
-  const { coords, status } = useLocation();
+  const { coords } = useLocation();
   const [query, setQuery] = useState('');
-  // The search bar stays at the finger's speed; the 123-row list catches up.
+  // The search bar stays at the finger's speed; the market list catches up.
   const deferredQuery = useDeferredValue(query);
   const [chosenSort, setChosenSort] = useState<Sort | null>(null);
 
@@ -102,15 +103,7 @@ export default function AddMarketsScreen() {
               value={sort}
               onChange={setChosenSort}
             />
-            {status === 'denied' && (
-              <Row
-                label={t('enableLocation')}
-                icon="locate"
-                chevron
-                onPress={() => void Linking.openSettings()}
-                last
-              />
-            )}
+            <LocationPrompt />
           </View>
         }
         ListEmptyComponent={

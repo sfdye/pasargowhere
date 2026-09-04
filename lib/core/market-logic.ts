@@ -190,9 +190,9 @@ export function parseMarketName(rawName: string | null | undefined): ParsedMarke
  * Irons out the dataset's quirks in place, once, as it arrives — from the network or from the
  * cache — so no screen has to remember to do it.
  *
- * Today that means the photo URLs: NEA serves 88 of the 123 over plain `http://`, which App
- * Transport Security blocks outright, so the image never arrives and the market shows no photo at
- * all. The same paths serve fine over TLS, so upgrade the scheme rather than punch a hole in ATS.
+ * Today that means the photo URLs: NEA serves many of them over plain `http://`, which App Transport
+ * Security blocks outright, so the image never arrives and the market shows no photo at all. The
+ * same paths serve fine over TLS, so upgrade the scheme rather than punch a hole in ATS.
  */
 export function normalizeMarkets(markets: Market[]): Market[] {
   for (const market of markets) {

@@ -1,8 +1,9 @@
 import { useDeferredValue, useMemo, useState } from 'react';
-import { FlatList, Linking, StyleSheet, View } from 'react-native';
+import { FlatList, StyleSheet, View } from 'react-native';
 import { Stack } from 'expo-router';
 import PhotoCard from '../../../components/PhotoCard';
 import DiscoverRow from '../../../components/DiscoverRow';
+import LocationPrompt from '../../../components/LocationPrompt';
 import { EmptyState, Row, Segmented, Text } from '../../../components/ui';
 import { getMarketCategories } from '../../../lib/core/market-category';
 import { FAMOUS_PASARS, famousBlurb } from '../../../lib/core/famous';
@@ -21,7 +22,7 @@ export default function DiscoverScreen() {
   const ready = useReady();
   const markets = useMarkets();
   const stale = useStale();
-  const { coords, status } = useLocation();
+  const { coords } = useLocation();
   const [query, setQuery] = useState('');
   const deferredQuery = useDeferredValue(query);
   const [filter, setFilter] = useState<Filter>('all');
@@ -170,15 +171,7 @@ export default function DiscoverScreen() {
               </View>
             )}
 
-            {status === 'denied' && !deferredQuery && (
-              <Row
-                label={t('enableLocation')}
-                icon="locate"
-                chevron
-                onPress={() => void Linking.openSettings()}
-                last
-              />
-            )}
+            {!deferredQuery && <LocationPrompt />}
           </View>
         }
         ListEmptyComponent={

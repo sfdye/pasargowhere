@@ -20,7 +20,7 @@ The app collects no personal information. There are no accounts, no ads, and no 
 
 ## What leaves your device
 
-**Closure data** — the app downloads the public NEA hawker centre closure dataset directly from [data.gov.sg](https://data.gov.sg). That request goes to the Singapore government's servers and is subject to their privacy statement.
+**Closure data** — the app downloads the public hawker centre closure dataset published by Singapore's National Environment Agency (NEA) directly from [data.gov.sg](https://data.gov.sg). That request goes to the Singapore government's servers and is subject to their privacy statement.
 
 **Map tiles** — the map loads tiles from [OneMap](https://www.onemap.gov.sg) (onemap.gov.sg), a Singapore government service.
 
