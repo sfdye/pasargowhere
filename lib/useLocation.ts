@@ -72,9 +72,13 @@ export function useLocation(): {
 
     let cancelled = false;
     void Location.getForegroundPermissionsAsync()
-      .then(({ granted }) => {
+      .then(({ granted, canAskAgain }) => {
         // Avoid interrupting first launch. Existing grants can still restore the location sort.
         if (granted && !cancelled && snapshot.status === 'idle') void acquire();
+        // A hard denial (blocked in Settings) never shows a dialog, so the first tap would
+        // otherwise do nothing — surface it now so the row opens Settings straight away.
+        else if (!granted && !canAskAgain && !cancelled && snapshot.status === 'idle')
+          set({ status: 'denied' });
       })
       .catch(() => {
         // Leave the action row available when the permission state cannot be read.
