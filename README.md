@@ -10,7 +10,7 @@ Most stalls at Singapore wet markets rest on Mondays, and markets have quarterly
 
 - Instant open/closed status for the markets you follow
 - Covers publicly listed hawker centres and wet markets managed by Singapore's National Environment Agency (NEA)
-- Detects Monday rest days (stallholder convention, not mandated by the NEA), quarterly cleaning, and other maintenance closures
+- Shows Monday rest days (stallholder convention, not mandated by the NEA), quarterly cleaning, and other maintenance closures
 - Upcoming closures list, and the next date each market reopens
 - Map of every market, sorted-by-distance search when you allow location
 - Local closure reminders: 7pm the evening before and 6am the morning of

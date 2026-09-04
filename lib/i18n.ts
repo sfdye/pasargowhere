@@ -34,7 +34,7 @@ const en = {
   otherWorks: REASON_WORDS.en.other_works.label,
   marketStalls: 'market stalls',
   foodStalls: 'food stalls',
-  dataSourceLink: "Singapore's NEA",
+  dataSourceLink: 'NEA',
   discoverNearYou: 'Near You',
   famousMarkets: 'Famous Pasars',
   famousBadge: 'Famous',
