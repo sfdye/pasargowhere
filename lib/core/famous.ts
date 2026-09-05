@@ -53,7 +53,7 @@ export const FAMOUS_PASARS: readonly FamousPasar[] = [
     name: 'Telok Ayer Food Centre',
     blurb: {
       en: 'Most Michelin-listed stalls in one centre',
-      zh: '单座小贩中心最多米其林推荐摊位',
+      zh: '米其林推荐摊位最多的小贩中心',
     },
   },
   {
