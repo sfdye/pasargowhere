@@ -123,7 +123,7 @@ const en = {
 const zh: Record<keyof typeof en, string> = {
   appTitle: '巴刹通',
   openToday: '正在营业',
-  closedToday: '今天不营业',
+  closedToday: '已结束营业',
   warningToday: '休息日',
   hoursNote: '营业时间来自 Google 地图 — 各摊位营业时间可能不同。',
   hoursNoteNoData: '各摊位的营业时间由摊主自定，未收录在国家环境局数据中——这里只显示全天不营业的日期。',
